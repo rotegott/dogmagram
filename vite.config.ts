@@ -1,10 +1,21 @@
 import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
-import type { NormalizedOutputOptions, OutputBundle, PluginContext } from 'rolldown';
+import type {
+  NormalizedOutputOptions,
+  OutputBundle,
+  PluginContext,
+} from 'rolldown';
 import { bundleStats } from 'rollup-plugin-bundle-stats';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { fileURLToPath } from 'url';
-import { defineConfig, loadEnv, normalizePath, type Plugin, type PluginOption, type UserConfig } from 'vite';
+import {
+  defineConfig,
+  loadEnv,
+  normalizePath,
+  type Plugin,
+  type PluginOption,
+  type UserConfig,
+} from 'vite';
 import { type Target, viteStaticCopy } from 'vite-plugin-static-copy';
 import { watchAndRun } from 'vite-plugin-watch-and-run';
 
@@ -20,7 +31,8 @@ const { version: APP_VERSION } = packageJson;
 const BUNDLE_STATS_OUT_DIR = 'bundle-stats';
 const DEFAULT_BUNDLE_STATS_BASELINE_FILE = 'baseline.json';
 const BUNDLE_STATS_VISUALIZER_FILE = 'visualizer.html';
-const WORKER_BUNDLE_COLLECTOR_PLUGIN_NAME = 'telegram:collect-worker-report-bundle';
+const WORKER_BUNDLE_COLLECTOR_PLUGIN_NAME =
+  'telegram:collect-worker-report-bundle';
 const BUNDLE_REPORT_PLUGIN_SUFFIX = ':with-workers';
 const DEV_SERVER_WATCH_IGNORES = [
   '**/.cache/**',
@@ -37,19 +49,28 @@ const DEV_BUNDLE_WARMUP_CLIENT_FILES = [
 const IMAGE_ASSET_RE = /\.(?:avif|gif|jpe?g|png|svg|webp)$/i;
 const WATCHED_STATIC_COPY_TARGETS: Target[] = [
   {
-    src: normalizePath(resolve(DIR_NAME, 'node_modules/opus-recorder/dist/decoderWorker.min.wasm')),
+    src: normalizePath(
+      resolve(
+        DIR_NAME,
+        'node_modules/opus-recorder/dist/decoderWorker.min.wasm',
+      ),
+    ),
     dest: 'assets',
     rename: { stripBase: true },
   },
 ];
 const UNWATCHED_STATIC_COPY_TARGETS: Target[] = [
   {
-    src: normalizePath(resolve(DIR_NAME, 'node_modules/emoji-data-ios/img-apple-64/**/*')),
+    src: normalizePath(
+      resolve(DIR_NAME, 'node_modules/emoji-data-ios/img-apple-64/**/*'),
+    ),
     dest: '.',
     rename: { stripBase: 2 },
   },
   {
-    src: normalizePath(resolve(DIR_NAME, 'node_modules/emoji-data-ios/img-apple-160/**/*')),
+    src: normalizePath(
+      resolve(DIR_NAME, 'node_modules/emoji-data-ios/img-apple-160/**/*'),
+    ),
     dest: '.',
     rename: { stripBase: 2 },
   },
@@ -78,14 +99,20 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
     HTTPS_CERT_PATH: httpsCertPath = '',
     HTTPS_KEY_PATH: httpsKeyPath = '',
   } = env;
-  const appEnv = env.APP_ENV || (mode === 'development' ? 'development' : 'production');
+  const appEnv =
+    env.APP_ENV || (mode === 'development' ? 'development' : 'production');
   const defaultAppTitle = `Telegram${appEnv !== 'production' ? ' Beta' : ''}`;
   const baseUrl = env.BASE_URL || PRODUCTION_URL;
   const appTitle = env.APP_TITLE || defaultAppTitle;
   const isProductionApp = appEnv === 'production';
-  const appleIcon = isProductionApp ? 'apple-touch-icon' : 'apple-touch-icon-dev';
+  const appleIcon = isProductionApp
+    ? 'apple-touch-icon'
+    : 'apple-touch-icon-dev';
   const publicUrl = new URL(baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`);
-  const socialImageUrl = new URL(isProductionApp ? 'icon-512x512.png' : 'icon-dev-512x512.png', publicUrl).href;
+  const socialImageUrl = new URL(
+    isProductionApp ? 'icon-512x512.png' : 'icon-dev-512x512.png',
+    publicUrl,
+  ).href;
   const widgetSandbox = await createWidgetSandbox();
   const csp = buildCsp(appEnv);
   const responseHeaders = {
@@ -118,66 +145,99 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
         },
       },
     }),
-    isDevelopmentMode && watchAndRun([
+    isDevelopmentMode &&
+    watchAndRun([
       {
         name: 'lang',
         watch: buildProjectPath('src/assets/localization/fallback.strings'),
-        watchFile: (filePath) => Promise.resolve(isProjectFile(filePath, 'src/assets/localization/fallback.strings')),
+        watchFile: (filePath) =>
+          Promise.resolve(
+            isProjectFile(
+              filePath,
+              'src/assets/localization/fallback.strings',
+            ),
+          ),
         run: 'npm run lang:ts',
       },
       {
         name: 'gramjs',
         watch: buildProjectPath('src/lib/gramjs/tl/static'),
-        watchFile: (filePath) => Promise.resolve(isPathInsideProjectDirectory(filePath, 'src/lib/gramjs/tl/static')),
+        watchFile: (filePath) =>
+          Promise.resolve(
+            isPathInsideProjectDirectory(
+              filePath,
+              'src/lib/gramjs/tl/static',
+            ),
+          ),
         run: 'npm run gramjs:tl',
       },
       {
         name: 'icons',
         watch: buildProjectPath('src/assets/font-icons'),
-        watchFile: (filePath) => Promise.resolve(isPathInsideProjectDirectory(filePath, 'src/assets/font-icons')),
+        watchFile: (filePath) =>
+          Promise.resolve(
+            isPathInsideProjectDirectory(filePath, 'src/assets/font-icons'),
+          ),
         run: 'npm run icons:build',
       },
     ]),
   ];
 
   if (bundleStatsVisualizerValue === '1') {
-    plugins.push(createBundleReportPlugin(visualizer((outputOptions) => ({
-      filename: resolve(
-        DIR_NAME,
-        outputOptions.dir,
-        BUNDLE_STATS_OUT_DIR,
-        BUNDLE_STATS_VISUALIZER_FILE,
+    plugins.push(
+      createBundleReportPlugin(
+        visualizer((outputOptions) => ({
+          filename: resolve(
+            DIR_NAME,
+            outputOptions.dir,
+            BUNDLE_STATS_OUT_DIR,
+            BUNDLE_STATS_VISUALIZER_FILE,
+          ),
+          open: true,
+          template: 'treemap',
+        })),
+        workerReportBundles,
       ),
-      open: true,
-      template: 'treemap',
-    })), workerReportBundles));
+    );
   }
 
   if (bundleStatsValue === '1') {
-    plugins.push(createBundleReportPlugin(bundleStats({
-      html: true,
-      json: true,
-      compare: Boolean(bundleStatsBaselinePath),
-      baseline: !bundleStatsBaselinePath, // For master branch upload
-      baselineFilepath: bundleStatsBaselinePath || DEFAULT_BUNDLE_STATS_BASELINE_FILE,
-      outDir: BUNDLE_STATS_OUT_DIR,
-    }), workerReportBundles));
+    plugins.push(
+      createBundleReportPlugin(
+        bundleStats({
+          html: true,
+          json: true,
+          compare: Boolean(bundleStatsBaselinePath),
+          baseline: !bundleStatsBaselinePath, // For master branch upload
+          baselineFilepath:
+            bundleStatsBaselinePath || DEFAULT_BUNDLE_STATS_BASELINE_FILE,
+          outDir: BUNDLE_STATS_OUT_DIR,
+        }),
+        workerReportBundles,
+      ),
+    );
 
     if (bundleStatsBaselinePath) {
       // Write current PR stats for the compact GitHub comment
-      plugins.push(createBundleReportPlugin(bundleStats({
-        html: false,
-        json: false,
-        compare: false,
-        baseline: true,
-        baselineFilepath: DEFAULT_BUNDLE_STATS_BASELINE_FILE,
-        outDir: BUNDLE_STATS_OUT_DIR,
-        silent: true,
-      }), workerReportBundles));
+      plugins.push(
+        createBundleReportPlugin(
+          bundleStats({
+            html: false,
+            json: false,
+            compare: false,
+            baseline: true,
+            baselineFilepath: DEFAULT_BUNDLE_STATS_BASELINE_FILE,
+            outDir: BUNDLE_STATS_OUT_DIR,
+            silent: true,
+          }),
+          workerReportBundles,
+        ),
+      );
     }
   }
 
-  const shouldCollectWorkerReportBundles = bundleStatsVisualizerValue === '1' || bundleStatsValue === '1';
+  const shouldCollectWorkerReportBundles =
+    bundleStatsVisualizerValue === '1' || bundleStatsValue === '1';
 
   if (appEnv !== 'test' && (!telegramApiId || !telegramApiHash)) {
     throw new Error('Missing required Telegram API credentials');
@@ -212,7 +272,9 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
     css: {
       modules: {
         localsConvention: 'camelCase',
-        generateScopedName: isProductionApp ? '[hash:base64:8]' : '[name]__[local]',
+        generateScopedName: isProductionApp
+          ? '[hash:base64:8]'
+          : '[name]__[local]',
       },
     },
     server: {
@@ -233,12 +295,26 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
     },
     build: {
       sourcemap: true,
-      assetsInlineLimit: (filePath) => (IMAGE_ASSET_RE.test(filePath) ? false : undefined),
+      assetsInlineLimit: (filePath) =>
+        IMAGE_ASSET_RE.test(filePath) ? false : undefined,
+      cssCodeSplit: false,
+      rolldownOptions: {
+        output: {
+          codeSplitting: false,
+          entryFileNames: 'app.js',
+          assetFileNames: (info) =>
+            info.names?.some((n) => n.endsWith('.css'))
+              ? 'app.css'
+              : 'assets/[name]-[hash][extname]',
+        },
+      },
     },
     worker: {
       plugins: () => [
         widgetSandbox.workerPlugin,
-        ...(shouldCollectWorkerReportBundles ? [createWorkerBundleCollectorPlugin(workerReportBundles)] : []),
+        ...(shouldCollectWorkerReportBundles
+          ? [createWorkerBundleCollectorPlugin(workerReportBundles)]
+          : []),
       ],
       rolldownOptions: {
         output: {
@@ -250,7 +326,10 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
   };
 });
 
-function createBundleReportPlugin(plugin: BundleReportPlugin, workerReportBundles: OutputBundle[]): Plugin {
+function createBundleReportPlugin(
+  plugin: BundleReportPlugin,
+  workerReportBundles: OutputBundle[],
+): Plugin {
   return {
     name: `${plugin.name}${BUNDLE_REPORT_PLUGIN_SUFFIX}`,
     async generateBundle(outputOptions, bundle, isWrite) {
@@ -266,7 +345,9 @@ function createBundleReportPlugin(plugin: BundleReportPlugin, workerReportBundle
   };
 }
 
-function createWorkerBundleCollectorPlugin(workerReportBundles: OutputBundle[]): Plugin {
+function createWorkerBundleCollectorPlugin(
+  workerReportBundles: OutputBundle[],
+): Plugin {
   return {
     name: WORKER_BUNDLE_COLLECTOR_PLUGIN_NAME,
     generateBundle(_outputOptions, bundle) {
@@ -275,7 +356,10 @@ function createWorkerBundleCollectorPlugin(workerReportBundles: OutputBundle[]):
   };
 }
 
-function mergeOutputBundles(bundle: OutputBundle, workerReportBundles: OutputBundle[]): OutputBundle {
+function mergeOutputBundles(
+  bundle: OutputBundle,
+  workerReportBundles: OutputBundle[],
+): OutputBundle {
   const result: OutputBundle = {};
 
   Object.assign(result, bundle, ...workerReportBundles);
@@ -288,7 +372,12 @@ function parseBundleReportHook(hook: unknown): BundleReportHook | undefined {
     return hook as BundleReportHook;
   }
 
-  if (!hook || typeof hook !== 'object' || !('handler' in hook) || typeof hook.handler !== 'function') {
+  if (
+    !hook ||
+    typeof hook !== 'object' ||
+    !('handler' in hook) ||
+    typeof hook.handler !== 'function'
+  ) {
     return undefined;
   }
 
@@ -318,7 +407,8 @@ function buildCsp(appEnv: string) {
     nicegram-tc: safepal-tc: tonkeeper-pro-tc: tonkeeper-tc:;
   base-uri 'none';
   form-action 'none';`
-    .replace(/\s+/g, ' ').trim();
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function buildProjectPath(projectPath: string) {
@@ -330,7 +420,9 @@ function isProjectFile(filePath: string, projectPath: string) {
 }
 
 function isPathInsideProjectDirectory(filePath: string, projectPath: string) {
-  return normalizePath(filePath).startsWith(`${buildProjectPath(projectPath)}/`);
+  return normalizePath(filePath).startsWith(
+    `${buildProjectPath(projectPath)}/`,
+  );
 }
 
 function getHttpsConfig(httpsCertPath: string, httpsKeyPath: string) {

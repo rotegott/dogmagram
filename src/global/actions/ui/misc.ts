@@ -755,7 +755,11 @@ addActionHandler('closeMapModal', (global, actions, payload): ActionReturnType =
   }, tabId);
 });
 
+/**
+ * @todo re-implement this system
+ */
 addActionHandler('checkAppVersion', (global): ActionReturnType => {
+  return; // edit
   fetch(`${APP_VERSION_URL}?${Date.now()}`)
     .then((response) => response.text())
     .then((version) => {
