@@ -40,19 +40,19 @@ export const INITIAL_PERFORMANCE_STATE_MAX: PerformanceType = {
 };
 
 export const INITIAL_PERFORMANCE_STATE_MED: PerformanceType = {
-  animatedEmoji: true,
+  animatedEmoji: false,
   autoplayGifs: true,
-  autoplayVideos: true,
-  contextMenuAnimations: true,
-  contextMenuBlur: true,
+  autoplayVideos: false,
+  contextMenuAnimations: true, // checked
+  contextMenuBlur: false, // check
   loopAnimatedStickers: true,
-  mediaViewerAnimations: true,
-  messageComposerAnimations: true,
-  messageSendingAnimations: true,
+  mediaViewerAnimations: false, // checked
+  messageComposerAnimations: false, // check
+  messageSendingAnimations: false, // check
   pageTransitions: true,
-  reactionEffects: true,
-  rightColumnAnimations: false,
-  stickerEffects: true,
+  reactionEffects: false,
+  rightColumnAnimations: false, // check
+  stickerEffects: false, // check
   storyRibbonAnimations: true,
   textStreaming: true,
 };
@@ -82,7 +82,7 @@ const PREFERS_REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduc
 export const INITIAL_SHARED_STATE: SharedState = {
   cacheVersion: SHARED_STATE_CACHE_VERSION,
   settings: {
-    theme: 'light',
+    theme: 'dark',
     themes: {
       light: {
         isBlurred: true,
@@ -102,7 +102,7 @@ export const INITIAL_SHARED_STATE: SharedState = {
     foldersPosition: FOLDERS_POSITION_DEFAULT,
     messageSendKeyCombo: 'enter',
     shouldReplaceTextShortcuts: true,
-    performance: PREFERS_REDUCED_MOTION ? INITIAL_PERFORMANCE_STATE_MIN : INITIAL_PERFORMANCE_STATE_MAX,
+    performance: PREFERS_REDUCED_MOTION ? INITIAL_PERFORMANCE_STATE_MIN : INITIAL_PERFORMANCE_STATE_MED,
     shouldSkipBrowserCloseConfirmation: false,
     language: 'en',
     timeFormat: '24h',

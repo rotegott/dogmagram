@@ -802,10 +802,10 @@
 "MenuAskText" = "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlease take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.";
 "SettingsPerformanceSliderTitle" = "Animation Level";
 "SettingsPerformanceSliderSubtitle" = "Choose the desired animations amount.";
-"SettingsPerformanceSliderLow" = "Power Saving";
-"SettingsPerformanceSliderMedium" = "Nice and Fast";
+"SettingsPerformanceSliderLow" = "Disabled";
+"SettingsPerformanceSliderMedium" = "Minimal";
 "SettingsPerformanceSliderCustom" = "Custom";
-"SettingsPerformanceSliderHigh" = "Lots of Stuff";
+"SettingsPerformanceSliderHigh" = "Full";
 "SettingsPerformanceInterfaceAnimations" = "Interface Animations";
 "SettingsPerformanceStickers" = "Stickers and Emoji";
 "SettingsPerformanceMediaAutoplay" = "Media Autoplay";
