@@ -594,8 +594,13 @@
 
   .local-action-message,
   .ActionMessage {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 2.4rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .unread-divider {
+    border-bottom: 1px solid var(--action-message-bg);
+    padding-bottom: 10px;
   }
 
   .sticky-date + .ActionMessage {
