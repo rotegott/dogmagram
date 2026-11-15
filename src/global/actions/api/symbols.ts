@@ -37,34 +37,37 @@ const SEARCH_THROTTLE = 500;
 const searchThrottled = throttle((cb) => cb(), SEARCH_THROTTLE, false);
 
 addActionHandler('loadStickerSets', async (global, actions): Promise<void> => {
-  const [addedStickers, addedCustomEmojis] = await Promise.all([
-    callApi('fetchStickerSets', { hash: global.stickers.added.hash }),
-    callApi('fetchCustomEmojiSets', { hash: global.customEmojis.added.hash }),
-  ]);
-  if (!addedCustomEmojis || !addedStickers) {
-    return;
-  }
-
+  const addedStickers = await callApi('fetchStickerSets', { hash: global.stickers.added.hash });
+  if (!addedStickers) return;
   global = getGlobal();
-
   global = updateStickerSets(
     global,
     'added',
     addedStickers.hash,
     addedStickers.sets,
   );
-
-  global = updateCustomEmojiSets(
-    global,
-    addedCustomEmojis.hash,
-    addedCustomEmojis.sets,
-  );
-
   setGlobal(global);
 
-  actions.loadCustomEmojis({
-    ids: global.recentCustomEmojis,
-  });
+  const isCurrentUserPremium = selectIsCurrentUserPremium(global); // check
+
+  /**
+   * @todo check and test
+   */
+  if (isCurrentUserPremium) {
+    const addedCustomEmojis = await callApi('fetchCustomEmojiSets', { hash: global.customEmojis.added.hash });
+    if (addedCustomEmojis) {
+      global = getGlobal();
+      global = updateCustomEmojiSets(
+        global,
+        addedCustomEmojis.hash,
+        addedCustomEmojis.sets,
+      );
+      setGlobal(global);
+    }
+    actions.loadCustomEmojis({
+      ids: global.recentCustomEmojis,
+    });
+  }
 });
 
 addActionHandler('loadAddedStickers', async (global, actions): Promise<void> => {

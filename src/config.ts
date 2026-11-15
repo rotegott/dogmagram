@@ -6,7 +6,7 @@ import type {
   ResaleGiftsFilterOptions,
 } from './types';
 
-export const APP_CODE_NAME = 'A';
+export const APP_CODE_NAME = 'DP';
 export const APP_ENV = import.meta.env.TG_APP_ENV;
 export const APP_NAME = import.meta.env.TG_APP_NAME || `Telegram Web ${APP_CODE_NAME}`;
 

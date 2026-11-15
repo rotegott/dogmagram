@@ -1,8 +1,7 @@
 import type { GlobalState } from '../global/types';
 
 import { DEBUG, IS_SCREEN_LOCKED_CACHE_KEY } from '../config';
-import {
-  loadCache, loadCachedSharedState, migrateCache, migrateSharedCache, removeAllGlobalCaches, setupCaching,
+import { loadCachedSharedState, migrateCache, migrateSharedCache, removeAllGlobalCaches, setupCaching,
 } from '../global/cache';
 import {
   getGlobal, setGlobal,
@@ -44,8 +43,12 @@ export async function initGlobal(force: boolean = false, prevGlobal?: GlobalStat
   }
 
   const initial = cloneDeep(INITIAL_GLOBAL_STATE);
+  /*
   const cache = await loadCache(initial);
   let global = cache || initial;
+  */
+  let global = initial;
+  const cache = undefined; // temp
 
   global = await applyPasscodeStateOnBoot(global);
 
