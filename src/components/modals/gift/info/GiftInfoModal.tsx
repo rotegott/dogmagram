@@ -14,7 +14,6 @@ import { getPeerTitle, isApiPeerChat, isApiPeerUser } from '../../../../global/h
 import { getMainUsername } from '../../../../global/helpers/users';
 import { selectPeer, selectPeerPaidMessagesStars, selectUser } from '../../../../global/selectors';
 import buildClassName from '../../../../util/buildClassName';
-import { copyTextToClipboard } from '../../../../util/clipboard';
 import { formatCurrencyAsString } from '../../../../util/formatCurrency';
 import { formatDateTime, secondsToDate } from '../../../../util/localization/dateFormat';
 import {
@@ -99,7 +98,6 @@ const GiftInfoModal = ({
     focusMessage,
     openGiftUpgradeModal,
     openGiftCraftModal,
-    showNotification,
     buyStarGift,
     closeGiftModal,
     openGiftInfoValueModal,
@@ -695,30 +693,13 @@ const GiftInfoModal = ({
     }
 
     if (isGiftUnique) {
-      const { ownerName, ownerAddress, ownerId } = gift;
+      const { ownerName, ownerId } = gift;
       const ownerPeer = ownerId ? selectPeer(getGlobal(), ownerId) : undefined;
       const {
         model, backdrop, pattern, originalDetails,
       } = giftAttributes || {};
 
-      if (ownerAddress) {
-        tableData.push([
-          lang('GiftInfoOwner'),
-          <span
-            className={styles.ownerAddress}
-            onClick={() => {
-              copyTextToClipboard(ownerAddress);
-              showNotification({
-                message: { key: 'WalletAddressCopied' },
-                icon: 'copy',
-              });
-            }}
-          >
-            {ownerAddress}
-            <Icon className={styles.copyIcon} name="copy" />
-          </span>,
-        ]);
-      } else if (ownerPeer || ownerName) {
+      if (ownerPeer || ownerName) {
         tableData.push([
           lang('GiftInfoOwner'),
           ownerId ? { chatId: ownerId, withEmojiStatus: true } : ownerName || '',

@@ -1477,10 +1477,6 @@ export interface ActionPayloads {
   } & WithTabId;
 
   loadStarStatus: undefined;
-  loadCurrencyRates: undefined;
-  setWalletCurrency: {
-    currency: string;
-  };
   loadStarsTransactions: {
     type: StarsTransactionType;
     isTon?: boolean;

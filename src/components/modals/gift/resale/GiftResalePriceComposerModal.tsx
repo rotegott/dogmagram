@@ -8,8 +8,7 @@ import type { TabState } from '../../../../global/types';
 import { TON_CURRENCY_CODE } from '../../../../config';
 import { buildStarsAmount } from '../../../../global/helpers/payments';
 import { selectStarsGiftResaleCommission } from '../../../../global/selectors';
-import {
-  convertTonToUsd, formatCurrencyAsString, formatTonFromNanos, parseTonPrefixToNanos,
+import { formatTonFromNanos, parseTonPrefixToNanos,
 } from '../../../../util/formatCurrency';
 import { formatStarsAsIcon, formatStarsAsText, formatTonAsIcon,
   formatTonAsText } from '../../../../util/localization/format';
@@ -155,16 +154,6 @@ const GiftResalePriceComposerModal = ({
               withNodes: true,
             })}
         </span>
-
-        {isPriceCorrect && Boolean(isPriceInTon ? tonUsdRate : starsUsdWithdrawRate) && (
-          <span className={styles.descriptionPrice}>
-            {`≈ ${formatCurrencyAsString(
-              isPriceInTon ? convertTonToUsd(tonPrice, tonUsdRate!) : starsPrice * starsUsdWithdrawRate!,
-              'USD',
-              lang.code,
-            )}`}
-          </span>
-        )}
       </div>
 
       <Checkbox

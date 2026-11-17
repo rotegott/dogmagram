@@ -206,7 +206,6 @@ export function saveStarGift({
   }));
 }
 
-// Shows a gift held in the wallet on the own profile, or hides it from every profile
 export function displayStarGift({
   slug,
   shouldDisplay,

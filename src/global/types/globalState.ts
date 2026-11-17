@@ -531,9 +531,6 @@ export type GlobalState = {
     history: StarsTransactionHistory;
     subscriptions?: StarsSubscriptions;
   };
-
-  currencyRates?: Record<string, number>;
-  walletCurrency?: string;
 };
 
 export type RequiredGlobalState = GlobalState & { _: never };

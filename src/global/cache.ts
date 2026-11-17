@@ -589,8 +589,6 @@ function reduceGlobal<T extends GlobalState>(global: T) {
       'timezones',
       'shareThemeBackdrops',
       'availableEffectById',
-      'walletCurrency',
-      'currencyRates',
     ]),
     lastIsChatInfoShown: !getIsMobile() ? global.lastIsChatInfoShown : undefined,
     stickers: reduceStickers(global),

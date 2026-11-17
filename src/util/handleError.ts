@@ -47,9 +47,6 @@ export function handleError(err: Error) {
 }
 
 function handleErrorEvent(e: ErrorEvent | PromiseRejectionEvent) {
-  console.log('>>>', e);
-  console.log(Object.getOwnPropertyNames(e));
-  console.log(e instanceof PromiseRejectionEvent);
   if (e instanceof ErrorEvent) {
     // https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded
     if (e.message === 'ResizeObserver loop limit exceeded') {

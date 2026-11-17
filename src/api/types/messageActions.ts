@@ -270,18 +270,6 @@ export interface ApiMessageActionGiftTon extends ActionMediaType {
   transactionId?: string;
 }
 
-// The service account reports transfers from senders the server cannot name, e.g. outside wallets
-export interface ApiMessageActionGramTransfer extends ActionMediaType {
-  type: 'gramTransfer';
-  // Nanotons, always positive
-  amount: bigint;
-  peerAddress: string;
-  transactionId: string;
-  comment?: string;
-  // Base64, decrypted on the client
-  encryptedComment?: string;
-}
-
 export interface ApiMessageActionPrizeStars extends ActionMediaType {
   type: 'prizeStars';
   isUnclaimed?: true;

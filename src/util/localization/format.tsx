@@ -1,7 +1,7 @@
 import type { ApiTypeCurrencyAmount } from '../../api/types';
 import type { LangFn } from './types';
 
-import { STARS_ICON_PLACEHOLDER, TON_CURRENCY_CODE } from '../../config';
+import { STARS_ICON_PLACEHOLDER } from '../../config';
 import { convertTonFromNanos, formatTonFromNanos, formatTonShortFromNanos } from '../../util/formatCurrency';
 import buildClassName from '../buildClassName';
 
@@ -131,10 +131,9 @@ export function formatStarsAsIcon(lang: LangFn, amount: number | string, options
 }
 
 export function formatCurrencyAmountAsText(lang: LangFn, currencyAmount: ApiTypeCurrencyAmount) {
-  if (currencyAmount.currency === TON_CURRENCY_CODE) {
-    return formatTonAsText(lang, currencyAmount.amount);
-  }
-
-  const amount = currencyAmount.amount + currencyAmount.nanos / 1e9;
-  return formatStarsAsText(lang, amount);
+  /**
+   * @todo
+   * check and edit
+   */
+  return formatStarsAsText(lang, currencyAmount.amount as number);
 }

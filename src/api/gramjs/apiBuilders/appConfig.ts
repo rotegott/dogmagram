@@ -91,7 +91,6 @@ export interface GramJsAppConfig extends LimitsConfig {
   stargifts_message_length_max?: number;
   stargifts_convert_period_max?: number;
   starref_start_param_prefixes?: string[];
-  ton_blockchain_explorer_url?: string;
   stars_paid_messages_available?: boolean;
   stars_usd_withdraw_rate_x1000?: number;
   stars_usd_sell_rate_x1000?: number;
@@ -106,9 +105,6 @@ export interface GramJsAppConfig extends LimitsConfig {
   stars_stargift_resale_amount_min?: number;
   stars_stargift_resale_commission_permille?: number;
   stargifts_craft_attribute_permilles?: number[];
-  ton_stargift_resale_amount_min?: number;
-  ton_stargift_resale_amount_max?: number;
-  ton_stargift_resale_commission_permille?: number;
   stars_suggested_post_amount_max?: number;
   stars_suggested_post_amount_min?: number;
   stars_suggested_post_commission_permille?: number;
@@ -116,11 +112,6 @@ export interface GramJsAppConfig extends LimitsConfig {
   stars_suggested_post_future_max?: number;
   stars_suggested_post_future_min?: number;
   no_forwards_request_expire_period?: number;
-  ton_suggested_post_commission_permille?: number;
-  ton_suggested_post_amount_max?: number;
-  ton_suggested_post_amount_min?: number;
-  ton_usd_rate?: number;
-  ton_topup_url?: string;
   poll_answers_max?: number;
   poll_close_period_max?: number;
   poll_countries_max?: number;
@@ -185,11 +176,6 @@ function getLimit(appConfig: GramJsAppConfig, key: Limit, fallbackKey: ApiLimitT
   const defaultLimit = appConfig[`${key}_default`] || DEFAULT_LIMITS[fallbackKey][0];
   const premiumLimit = appConfig[`${key}_premium`] || DEFAULT_LIMITS[fallbackKey][1];
   return [defaultLimit, premiumLimit] as const;
-}
-
-// The config is JSON, so nanotons arrive as doubles and only whole values are taken
-function buildNanotons(value?: number) {
-  return value !== undefined && Number.isInteger(value) ? BigInt(value) : undefined;
 }
 
 export function buildAppConfig(json: GramJs.TypeJSONValue, hash: number): ApiAppConfig {
@@ -269,7 +255,6 @@ export function buildAppConfig(json: GramJs.TypeJSONValue, hash: number): ApiApp
     starGiftMaxMessageLength: appConfig.stargifts_message_length_max,
     starGiftMaxConvertPeriod: appConfig.stargifts_convert_period_max,
     starRefStartPrefixes: appConfig.starref_start_param_prefixes,
-    tonExplorerUrl: appConfig.ton_blockchain_explorer_url,
     savedGiftPinLimit: appConfig.stargifts_pinned_to_top_limit,
     freezeSinceDate: appConfig.freeze_since_date,
     freezeUntilDate: appConfig.freeze_until_date,
@@ -278,9 +263,6 @@ export function buildAppConfig(json: GramJs.TypeJSONValue, hash: number): ApiApp
     starsStargiftResaleAmountMax: appConfig.stars_stargift_resale_amount_max,
     starsStargiftResaleCommissionPermille: appConfig.stars_stargift_resale_commission_permille,
     stargiftsCraftAttributePermilles: appConfig.stargifts_craft_attribute_permilles,
-    tonStargiftResaleAmountMin: buildNanotons(appConfig.ton_stargift_resale_amount_min),
-    tonStargiftResaleAmountMax: buildNanotons(appConfig.ton_stargift_resale_amount_max),
-    tonStargiftResaleCommissionPermille: appConfig.ton_stargift_resale_commission_permille,
     starsSuggestedPostAmountMax: appConfig.stars_suggested_post_amount_max,
     starsSuggestedPostAmountMin: appConfig.stars_suggested_post_amount_min,
     starsSuggestedPostCommissionPermille: appConfig.stars_suggested_post_commission_permille,
@@ -288,11 +270,6 @@ export function buildAppConfig(json: GramJs.TypeJSONValue, hash: number): ApiApp
     starsSuggestedPostFutureMax: appConfig.stars_suggested_post_future_max,
     starsSuggestedPostFutureMin: appConfig.stars_suggested_post_future_min,
     noForwardsRequestExpirePeriod: appConfig.no_forwards_request_expire_period,
-    tonSuggestedPostCommissionPermille: appConfig.ton_suggested_post_commission_permille,
-    tonSuggestedPostAmountMax: buildNanotons(appConfig.ton_suggested_post_amount_max),
-    tonSuggestedPostAmountMin: buildNanotons(appConfig.ton_suggested_post_amount_min),
-    tonUsdRate: appConfig.ton_usd_rate,
-    tonTopupUrl: appConfig.ton_topup_url,
     pollMaxAnswers: appConfig.poll_answers_max,
     pollClosePeriodMax: appConfig.poll_close_period_max,
     pollCountriesMax: appConfig.poll_countries_max,

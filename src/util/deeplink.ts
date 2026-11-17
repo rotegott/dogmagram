@@ -7,7 +7,7 @@ import type { DeepLinkMethod } from './deepLinkParser';
 import { LeftColumnContent } from '../types';
 
 import {
-  API_CHAT_TYPES, RE_TG_LINK, TON_CURRENCY_CODE,
+  API_CHAT_TYPES, RE_TG_LINK,
 } from '../config';
 import { IS_BAD_URL_PARSER } from './browser/globalEnvironment';
 import { tryParseDeepLink } from './deepLinkParser';
@@ -105,9 +105,6 @@ export const processDeepLink = (url: string, linkContext?: LinkContext): boolean
           case 'stars':
             actions.openStarsBalanceModal({});
             return true;
-          case 'ton':
-            actions.openStarsBalanceModal({ currency: TON_CURRENCY_CODE });
-            return true;
           case 'send-gift':
             actions.openGiftRecipientPicker();
             return true;
@@ -122,9 +119,6 @@ export const processDeepLink = (url: string, linkContext?: LinkContext): boolean
       }
       case 'stars':
         actions.openStarsBalanceModal({});
-        return true;
-      case 'ton':
-        actions.openStarsBalanceModal({ currency: TON_CURRENCY_CODE });
         return true;
       case 'sendGramsLink': {
         break;

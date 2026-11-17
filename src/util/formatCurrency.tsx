@@ -22,10 +22,6 @@ export function convertCurrencyFromBaseUnit(amount: number, currency: string) {
   return amount / 10 ** getCurrencyExp(currency);
 }
 
-function convertCurrencyToBaseUnit(amount: number, currency: string) {
-  return amount * 10 ** getCurrencyExp(currency);
-}
-
 // The only way from nanotons to a float, which is only fit for display, plurals and fiat
 export function convertTonFromNanos(nanos: bigint): number {
   return convertCurrencyFromBaseUnit(Number(nanos), TON_CURRENCY_CODE);
@@ -98,38 +94,6 @@ export function formatCurrency(
   }
 
   return formatCurrencyAsString(totalPrice, currency, lang.code, options);
-}
-
-export function convertTonToUsd(nanos: bigint, usdRate: number): number {
-  return convertTonFromNanos(nanos) * usdRate * 100;
-}
-
-// Through USD, as `payments.getCurrencyRates` does
-function convertTonToCurrency(nanos: bigint, tonUsdRate: number, currency: string, currencyRate: number): number {
-  return convertCurrencyToBaseUnit(convertTonFromNanos(nanos) * tonUsdRate * currencyRate, currency);
-}
-
-export function formatTonInFiat(
-  nanos: bigint,
-  tonUsdRate: number | undefined,
-  currency: string,
-  currencyRate: number | undefined,
-  locale?: string,
-  options?: {
-    shouldOmitFractions?: boolean;
-    isPrecise?: boolean;
-  },
-): string | undefined {
-  if (tonUsdRate === undefined || currencyRate === undefined) {
-    return undefined;
-  }
-
-  return formatCurrencyAsString(
-    convertTonToCurrency(nanos, tonUsdRate, currency, currencyRate),
-    currency,
-    locale,
-    { shouldOmitFractions: options?.shouldOmitFractions, isPrecise: options?.isPrecise },
-  );
 }
 
 export function formatCurrencyAsString(

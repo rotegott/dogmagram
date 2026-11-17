@@ -4,7 +4,7 @@ import type { SettingsAction } from '../types';
 import type { RegularLangKey } from '../types/language';
 import { SettingsScreens } from '../types';
 
-import { FAQ_URL, PRIVACY_URL, TON_CURRENCY_CODE } from '../config';
+import { FAQ_URL, PRIVACY_URL } from '../config';
 import {
   selectIsWallpaperUploading, selectTabState, selectTheme, selectUserFullInfo,
 } from '../global/selectors';
@@ -18,13 +18,9 @@ import { clearWidgetStorage } from './widgetStorage';
 const WALLPAPER_FILE_TYPES = 'image/jpeg';
 
 const SETTINGS_ACTIONS: [SettingsScreens, RegularLangKey, SettingsAction][] = [
-  [SettingsScreens.Main, 'WalletMenuItem', 'openWallet'],
   [SettingsScreens.Main, 'TelegramPremium', 'openPremium'],
   [SettingsScreens.Main, 'MenuStars', 'openStars'],
-  [SettingsScreens.Main, 'GramEarnings', 'openTon'],
   [SettingsScreens.Main, 'MenuSendGift', 'sendGift'],
-  [SettingsScreens.Main, 'AskAQuestion', 'askQuestion'],
-  [SettingsScreens.Main, 'MenuTelegramFaq', 'openFaq'],
   [SettingsScreens.Main, 'MenuPrivacyPolicy', 'openPrivacyPolicy'],
   [SettingsScreens.Main, 'LogOutTitle', 'logOut'],
   [SettingsScreens.EditProfile, 'SettingsBirthday', 'setBirthday'],
@@ -50,14 +46,14 @@ export function runSettingsAction(action: SettingsAction, tabId = getCurrentTabI
     case 'openWallet':
       //
       break;
+    case 'openTon':
+      //
+      break;
     case 'openPremium':
       actions.openPremiumModal({ tabId });
       break;
     case 'openStars':
       actions.openStarsBalanceModal({ tabId });
-      break;
-    case 'openTon':
-      actions.openStarsBalanceModal({ currency: TON_CURRENCY_CODE, tabId });
       break;
     case 'sendGift':
       actions.openGiftRecipientPicker({ tabId });

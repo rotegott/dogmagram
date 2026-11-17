@@ -10,7 +10,7 @@ import {
   selectPeer,
   selectStarsGiftResaleCommission,
 } from '../../../../global/selectors';
-import { convertTonToUsd, formatCurrencyAsString } from '../../../../util/formatCurrency';
+import { formatCurrencyAsString } from '../../../../util/formatCurrency';
 import {
   formatCurrencyAmountAsText, formatStarsAsIcon, formatStarsAsText, formatTonAsIcon, formatTonAsText,
 } from '../../../../util/localization/format';
@@ -137,8 +137,7 @@ const GiftOfferAcceptModal = ({
 
     let receiveValueUsd: number;
     if (tonReceiveAmount !== undefined) {
-      if (!tonUsdRate) return undefined;
-      receiveValueUsd = convertTonToUsd(tonReceiveAmount, tonUsdRate) / 100;
+      return;
     } else {
       if (!starsUsdRate) return undefined;
       receiveValueUsd = starsReceiveAmount * starsUsdRate / 100;
@@ -152,7 +151,7 @@ const GiftOfferAcceptModal = ({
     if (percent <= PRICE_WARNING_THRESHOLD_PERCENT) return undefined;
 
     return { percent, isLow: isLower };
-  }, [renderingModal, tonReceiveAmount, starsReceiveAmount, tonUsdRate, starsUsdRate]);
+  }, [renderingModal, tonReceiveAmount, starsReceiveAmount, starsUsdRate]);
 
   if (!renderingModal || !renderingBuyerPeer) return undefined;
 
