@@ -13,7 +13,6 @@ import type {
   ApiTypePeerColor,
 } from './peers';
 import type { ApiSavedStarGift, ApiStarsRating } from './stars';
-import type { ApiWalletCard } from './wallet';
 
 export interface ApiUser {
   id: string;
@@ -100,7 +99,6 @@ export interface ApiUserFullInfo {
   noForwardsPeerEnabled?: boolean;
   isUnofficialSecurityRisk?: boolean;
   botManagerId?: string;
-  walletCard?: ApiWalletCard;
   shareTheme?: ApiShareTheme;
 }
 

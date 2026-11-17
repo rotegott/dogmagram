@@ -18,7 +18,7 @@ import type { IconName } from '../../../types/icons/index';
 import type { AnimationLevel, ThemeKey } from '../../../types/index';
 import { MediaViewerOrigin } from '../../../types/index';
 
-import { MIN_SHOWN_WALLET_NANOS, SERVICE_NOTIFICATIONS_USER_ID } from '../../../config.ts';
+import { SERVICE_NOTIFICATIONS_USER_ID } from '../../../config.ts';
 import {
   getUserStatus, isAnonymousForwardsChat, isChatChannel, isSystemBot, isUserOnline,
 } from '../../../global/helpers/index';
@@ -46,7 +46,6 @@ import { IS_TOUCH_ENV } from '../../../util/browser/windowEnvironment';
 import buildClassName from '../../../util/buildClassName';
 import buildStyle from '../../../util/buildStyle';
 import { captureEvents, SwipeDirection } from '../../../util/captureEvents';
-import { formatTonParts } from '../../../util/localization/format';
 import { MEMO_EMPTY_ARRAY } from '../../../util/memo';
 import { resolveTransitionName } from '../../../util/resolveTransitionName';
 import { REM } from '../helpers/mediaDimensions.ts';
@@ -63,7 +62,6 @@ import usePhotosPreload from '../hooks/usePhotosPreload';
 import Transition from '../../ui/Transition.tsx';
 import Avatar from '../Avatar.tsx';
 import FullNameTitle from '../FullNameTitle.tsx';
-import GramIcon from '../icons/GramIcon';
 import Icon from '../icons/Icon.tsx';
 import TopicIcon from '../TopicIcon.tsx';
 import ProfileMusicStrip from './ProfileMusicStrip';
@@ -157,14 +155,9 @@ const ProfileInfo = ({
     openUniqueGiftBySlug,
     openProfileRatingModal,
     loadPeerSavedGifts,
-    openWalletCardModal,
   } = getActions();
 
   const savedMusic = userFullInfo?.savedMusic;
-  const walletBalance = userFullInfo?.walletCard?.balance;
-  // Not in Saved Messages or the settings, which also show the current user
-  const hasWalletBalance = Boolean(user && (!user.isSelf || isOwnProfile) && walletBalance !== undefined
-    && walletBalance >= MIN_SHOWN_WALLET_NANOS);
 
   const lang = useLang();
 
@@ -264,10 +257,6 @@ const ProfileInfo = ({
       mediaIndex: currentPhotoIndex,
       origin: isForSettings ? MediaViewerOrigin.SettingsAvatar : MediaViewerOrigin.ProfileAvatar,
     });
-  });
-
-  const handleWalletBalanceClick = useLastCallback(() => {
-    openWalletCardModal({ userId: user!.id });
   });
 
   const handleStatusClick = useLastCallback(() => {
@@ -448,35 +437,6 @@ const ProfileInfo = ({
     );
   }
 
-  function renderWalletBalance() {
-    const [whole, fraction] = formatTonParts(lang, walletBalance!, true);
-
-    return (
-      <button
-        type="button"
-        className={styles.walletBalance}
-        style={createVtnStyle('walletBalance', true)}
-        data-wallet-card-origin={user!.id}
-        onClick={handleWalletBalanceClick}
-      >
-        <span className={styles.walletLabel}>
-          {lang('WalletSendBalance', {
-            amount: (
-              <span className={styles.walletAmount}>
-                <GramIcon isMono withWhiteStar={!isExpanded} className={styles.walletIcon} />
-                <span>
-                  {whole}
-                  {fraction && <span className={styles.walletFraction}>{fraction}</span>}
-                </span>
-              </span>
-            ),
-          }, { withNodes: true })}
-        </span>
-        <Icon name="next" className={styles.walletChevron} />
-      </button>
-    );
-  }
-
   function renderStatus() {
     const isAnonymousForwards = isAnonymousForwardsChat(peerId);
     const isSystemBotChat = isSystemBot(peerId);
@@ -548,7 +508,6 @@ const ProfileInfo = ({
         !isExpanded && styles.minimized,
         isPlain && styles.plain,
         hasPatternBackground && styles.withBackground,
-        hasWalletBalance && styles.hasWalletBalance,
         savedMusic && styles.hasMusic,
       )}
       style={buildStyle(
@@ -675,7 +634,6 @@ const ProfileInfo = ({
           />
         )}
         {renderStatus()}
-        {hasWalletBalance && renderWalletBalance()}
       </div>
       {savedMusic && (
         <ProfileMusicStrip

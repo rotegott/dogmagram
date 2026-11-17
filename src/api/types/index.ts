@@ -15,4 +15,3 @@ export * from './stories';
 export * from './business';
 export * from './stars';
 export * from './peers';
-export * from './wallet';

@@ -269,9 +269,6 @@ export const SETTINGS_SEARCH_SECTIONS: SettingsSearchSection[] = [
 ];
 
 export const SETTINGS_SEARCH_ENTRIES: SettingsSearchEntry[] = [
-  ...buildEntries(SettingsScreens.Main, ['WalletMenuItem'], {
-    requires: 'isWalletAvailable', icon: 'gram-filled', iconBg: 'blue',
-  }),
   ...buildEntries(SettingsScreens.Main, ['TelegramPremium'], {
     requires: 'canBuyPremium', icon: 'star', iconBg: 'premium',
   }),

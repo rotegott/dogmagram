@@ -1,7 +1,7 @@
 import { memo, useCallback } from '../../../lib/teact/teact';
 import { getActions, withGlobal } from '../../../global';
 
-import type { ApiStarsAmount, ApiTonAmount } from '../../../api/types';
+import type { ApiStarsAmount } from '../../../api/types';
 import type { TabState } from '../../../global/types';
 
 import { TON_CURRENCY_CODE } from '../../../config';
@@ -18,13 +18,11 @@ export type OwnProps = {
 
 type StateProps = {
   starBalance?: ApiStarsAmount;
-  tonBalance?: ApiTonAmount;
 };
 
 const PriceConfirmModal = ({
   modal,
   starBalance,
-  tonBalance,
 }: OwnProps & StateProps) => {
   const actions = getActions();
 
@@ -37,7 +35,8 @@ const PriceConfirmModal = ({
     }
 
     const { newAmount } = modal;
-    const currentBalance = newAmount.currency === TON_CURRENCY_CODE ? tonBalance : starBalance;
+    if (newAmount.currency === TON_CURRENCY_CODE) return;
+    const currentBalance = starBalance;
 
     if (currentBalance === undefined) {
       actions.closePriceConfirmModal();
@@ -58,7 +57,7 @@ const PriceConfirmModal = ({
       tabId: getCurrentTabId(),
     });
     actions.closePriceConfirmModal();
-  }, [modal, starBalance, tonBalance, actions]);
+  }, [modal, starBalance, actions]);
 
   const handleClose = useCallback(() => {
     actions.closePriceConfirmModal();
@@ -91,11 +90,9 @@ const PriceConfirmModal = ({
 
 export default memo(withGlobal<OwnProps>((global): Complete<StateProps> => {
   const starBalance = global.stars?.balance;
-  const tonBalance = global.ton?.balance;
 
   return {
     starBalance,
-    tonBalance,
   };
 },
 )(PriceConfirmModal));

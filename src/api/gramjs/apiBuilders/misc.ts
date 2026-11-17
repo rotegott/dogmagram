@@ -267,7 +267,7 @@ export function buildApiUrlAuthResult(result: GramJs.TypeUrlAuthResult): ApiUrlA
   if (result instanceof GramJs.UrlAuthResultRequest) {
     const {
       bot, domain, requestWriteAccess, requestPhoneNumber, browser, platform, ip, region, matchCodes,
-      matchCodesFirst, userIdHint, isApp, verifiedAppName, requestWallet, tcSessionId, tcClientId,
+      matchCodesFirst, userIdHint, isApp, verifiedAppName,
     } = result;
     const user = buildApiUser(bot);
     if (!user) return undefined;
@@ -289,10 +289,6 @@ export function buildApiUrlAuthResult(result: GramJs.TypeUrlAuthResult): ApiUrlA
       matchCodesFirst,
       userIdHint: userIdHint?.toString(),
       verifiedAppName,
-      // Without the session and the key the login goes on as a plain one
-      walletRequest: requestWallet && tcSessionId !== undefined && tcClientId
-        ? { sessionId: tcSessionId.toString(), clientId: tcClientId }
-        : undefined,
     };
   }
 

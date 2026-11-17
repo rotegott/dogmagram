@@ -10,7 +10,6 @@ import type { ActionReturnType } from '../../types';
 import {
   DEFAULT_RESALE_GIFTS_FILTER_OPTIONS,
   STARS_CURRENCY_CODE,
-  TON_CURRENCY_CODE,
 } from '../../../config';
 import { getCurrentTabId } from '../../../util/establishMultitabRole';
 import { buildCollectionByCallback, buildCollectionByKey } from '../../../util/iteratees';
@@ -90,34 +89,13 @@ addActionHandler('loadStarStatus', async (global): Promise<void> => {
     }
   }
 
-  if (tonStatus?.balance.currency === TON_CURRENCY_CODE) {
-    global = {
-      ...global,
-      ton: {
-        ...tonStatus,
-        balance: tonStatus.balance,
-        history: {
-          all: undefined,
-          inbound: undefined,
-          outbound: undefined,
-        },
-      },
-    };
-
-    global = updateStarsBalance(global, tonStatus.balance);
-
-    if (tonStatus.history) {
-      global = appendStarsTransactions(global, 'all', tonStatus.history, tonStatus.nextHistoryOffset, true);
-    }
-  }
-
   setGlobal(global);
 });
 
 addActionHandler('loadStarsTransactions', async (global, actions, payload): Promise<void> => {
   const { type, isTon } = payload;
-
-  const history = isTon ? global.ton?.history[type] : global.stars?.history[type];
+  if (isTon) return;
+  const history = global.stars?.history[type];
   const offset = history?.nextOffset;
   if (history && !offset) return; // Already loaded all
 
@@ -136,7 +114,7 @@ addActionHandler('loadStarsTransactions', async (global, actions, payload): Prom
 
   global = updateStarsBalance(global, result.balance);
   if (result.history) {
-    global = appendStarsTransactions(global, type, result.history, result.nextOffset, isTon);
+    global = appendStarsTransactions(global, type, result.history, result.nextOffset);
   }
   setGlobal(global);
 });

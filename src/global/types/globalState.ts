@@ -49,8 +49,6 @@ import type {
   ApiStickerSet,
   ApiStoryAlbum,
   ApiTimezone,
-  ApiTonAmount,
-  ApiTonConnectSession,
   ApiTopPeerCategory,
   ApiTranscription,
   ApiUpdateAuthorizationStateType,
@@ -61,14 +59,6 @@ import type {
   ApiUserSavedMusic,
   ApiUserStatus,
   ApiVideo,
-  ApiWalletCardSticker,
-  ApiWalletCollectible,
-  ApiWalletGaslessInfo,
-  ApiWalletSavedWallet,
-  ApiWalletState,
-  ApiWalletStatus,
-  ApiWalletTransaction,
-  ApiWalletUserAddress,
   ApiWallpaper,
   ApiWebPage,
   ApiWebSession,
@@ -541,56 +531,7 @@ export type GlobalState = {
     history: StarsTransactionHistory;
     subscriptions?: StarsSubscriptions;
   };
-  ton?: {
-    balance: ApiTonAmount;
-    history: StarsTransactionHistory;
-  };
-  wallet?: {
-    tonConnectSessions?: ApiTonConnectSession[];
-    isLoadingTonConnectSessions?: boolean;
-    hasTonConnectSessionsError?: boolean;
-    // Unknown until the first `wallet.getState` answers
-    status?: ApiWalletStatus;
-    // The last `wallet.getState` failed
-    hasStateError?: boolean;
-    state?: ApiWalletState;
-    transactions?: ApiWalletTransaction[];
-    // `undefined` means the whole history is loaded; the empty string is the cache's "stale, refresh first"
-    nextOffset?: string;
-    collectibles?: ApiWalletCollectible[];
-    collectiblesNextOffset?: string;
-    // Own card edits that the server has not taken yet; they show instead of the card from the profile
-    cardDraft?: {
-      // The wallet the edits were made for
-      address: string;
-      stickers: ApiWalletCardSticker[];
-      backgroundAddress?: string;
-    };
-    // Empty for a user the server knows no wallet of
-    userAddresses?: Record<string, string>;
-    // `false` records an address with no Telegram user
-    resolvedAddresses?: Record<string, ApiWalletUserAddress | false>;
-    hasLocalSecret?: boolean;
-    isKeyRotationPending?: boolean;
-    // Tells the echo of a swap made here from a swap made on another device
-    isReplacing?: boolean;
-    // The server balance a sent transfer was deducted from; the same figure from the server is stale
-    staleBalance?: {
-      amount: bigint;
-      // Server time, seconds
-      expiresAt: number;
-    };
-    decryptedComments?: Record<string, string>;
-    gaslessInfo?: ApiWalletGaslessInfo;
-    // Nanotons
-    keyRotationFee?: bigint;
-    loadedTransactions?: Record<string, ApiWalletTransaction>;
-    savedWallets?: ApiWalletSavedWallet[];
-    // Present while the former wallet bot still holds money
-    existingWaltBalanceUrl?: string;
-  };
 
-  // Against USD
   currencyRates?: Record<string, number>;
   walletCurrency?: string;
 };

@@ -21,8 +21,7 @@ import { formatCalendarDate, secondsToDate } from '../../../util/localization/da
 import {
   formatStarsAsIcon,
   formatStarsAsText,
-  formatTonAsIcon,
-  formatTonAsText } from '../../../util/localization/format';
+  formatTonAsIcon } from '../../../util/localization/format';
 import { getServerTime } from '../../../util/serverTime';
 
 import useFlag from '../../../hooks/useFlag';
@@ -44,13 +43,10 @@ export type OwnProps = {
 
 type StateProps = {
   starBalance?: ApiStarsAmount;
-  tonBalance?: bigint;
   peer?: ApiPeer;
   currentDraft?: ApiDraft;
   maxStarsAmount: number;
   minStarsAmount: number;
-  tonMaxAmount: bigint;
-  tonMinAmount: bigint;
   ageMinSeconds: number;
   futureMin: number;
   futureMax: number;
@@ -63,13 +59,9 @@ const FUTURE_TIME_ADJUSTMENT = 1 * 60;
 const SuggestMessageModal = ({
   modal,
   starBalance,
-  tonBalance,
-  peer,
   currentDraft,
   maxStarsAmount,
   minStarsAmount,
-  tonMaxAmount,
-  tonMinAmount,
   ageMinSeconds,
   futureMin,
   futureMax,
@@ -115,10 +107,7 @@ const SuggestMessageModal = ({
   const handleAmountChange = useLastCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    if (!isCurrencyStars) {
-      setAmountText(parseTonPrefixToNanos(value) > tonMaxAmount ? formatTonFromNanos(tonMaxAmount) : value);
-      return;
-    }
+    if (!isCurrencyStars) return;
 
     const number = parseFloat(value);
     const result = value === '' || Number.isNaN(number) ? undefined
@@ -137,7 +126,7 @@ const SuggestMessageModal = ({
     closeCalendar();
   });
 
-  const isBelowMin = hasAmount && (isCurrencyStars ? starsAmount < minStarsAmount : tonAmount < tonMinAmount);
+  const isBelowMin = hasAmount && (starsAmount < minStarsAmount);
 
   const handleOffer = useLastCallback(() => {
     if (isBelowMin) {
@@ -145,25 +134,14 @@ const SuggestMessageModal = ({
     }
 
     if (!isMonoforumAdmin) {
-      if (isCurrencyStars) {
-        const currentBalance = starBalance?.amount || 0;
-
-        if (starsAmount > currentBalance) {
-          openStarsBalanceModal({
-            topup: {
-              balanceNeeded: starsAmount,
-            },
-          });
-          return;
-        }
-      } else {
-        const currentTonBalance = tonBalance || 0n;
-        if (tonAmount > currentTonBalance) {
-          openStarsBalanceModal({
-            currency: TON_CURRENCY_CODE,
-          });
-          return;
-        }
+      const currentBalance = starBalance?.amount || 0;
+      if (starsAmount > currentBalance) {
+        openStarsBalanceModal({
+          topup: {
+            balanceNeeded: starsAmount,
+          },
+        });
+        return;
       }
     }
 
@@ -228,9 +206,7 @@ const SuggestMessageModal = ({
           <div className={styles.description}>
             {isBelowMin
               ? lang('DescriptionSuggestedPostMinimumOffer', {
-                amount: isCurrencyStars
-                  ? formatStarsAsText(lang, minStarsAmount)
-                  : formatTonAsText(lang, tonMinAmount) },
+                amount: formatStarsAsText(lang, minStarsAmount) },
               { withNodes: true, withMarkdown: true })
               : isCurrencyStars
                 ? lang('SuggestMessagePriceDescriptionStars')
@@ -317,20 +293,14 @@ export default memo(withGlobal<OwnProps>(
     const futureMin = appConfig.starsSuggestedPostFutureMin;
     const futureMax = appConfig.starsSuggestedPostFutureMax;
 
-    const tonMaxAmount = appConfig.tonSuggestedPostAmountMax;
-    const tonMinAmount = appConfig.tonSuggestedPostAmountMin;
-
     const isMonoforumAdmin = modal ? selectIsMonoforumAdmin(global, modal.chatId) : false;
 
     return {
       peer,
       starBalance,
-      tonBalance: global.ton?.balance?.amount,
       currentDraft,
       maxStarsAmount,
       minStarsAmount,
-      tonMaxAmount,
-      tonMinAmount,
       ageMinSeconds,
       futureMin,
       futureMax,

@@ -121,11 +121,6 @@ export interface GramJsAppConfig extends LimitsConfig {
   ton_suggested_post_amount_min?: number;
   ton_usd_rate?: number;
   ton_topup_url?: string;
-  wallet_available?: boolean;
-  wallet_transfer_min_nanos?: number;
-  wallet_gasless_daily_transfers?: number;
-  wallet_card_bg_gifts?: string[];
-  old_wallet_bot_username?: string;
   poll_answers_max?: number;
   poll_close_period_max?: number;
   poll_countries_max?: number;
@@ -298,11 +293,6 @@ export function buildAppConfig(json: GramJs.TypeJSONValue, hash: number): ApiApp
     tonSuggestedPostAmountMin: buildNanotons(appConfig.ton_suggested_post_amount_min),
     tonUsdRate: appConfig.ton_usd_rate,
     tonTopupUrl: appConfig.ton_topup_url,
-    isWalletAvailable: appConfig.wallet_available,
-    walletTransferMinNanos: buildNanotons(appConfig.wallet_transfer_min_nanos),
-    walletGaslessDailyTransfers: appConfig.wallet_gasless_daily_transfers,
-    walletCardBackgroundCollections: appConfig.wallet_card_bg_gifts,
-    oldWalletBotUsername: appConfig.old_wallet_bot_username,
     pollMaxAnswers: appConfig.poll_answers_max,
     pollClosePeriodMax: appConfig.poll_close_period_max,
     pollCountriesMax: appConfig.poll_countries_max,

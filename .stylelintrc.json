@@ -13,8 +13,7 @@
     "stylelint-declaration-block-no-ignored-properties",
     "stylelint-high-performance-animation",
     "stylelint-group-selectors",
-    "stylelint-plugin-use-baseline",
-    "@mytonwallet/stylelint-whole-pixel"
+    "stylelint-plugin-use-baseline"
   ],
   "rules": {
     "property-no-unknown": [

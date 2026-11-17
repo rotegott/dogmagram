@@ -9,7 +9,7 @@ import type { ApiMessage, ApiUser } from '../../../api/types';
 import type { GlobalState } from '../../../global/types';
 import type { ObserveFn } from '../../../hooks/useIntersectionObserver';
 import type {
-  BubbleGesture, ContentSafeArea, WalletCall, WidgetAction, WidgetHost, WidgetRequest, WidgetRequestAnswer,
+  BubbleGesture, ContentSafeArea, WidgetAction, WidgetHost, WidgetRequest, WidgetRequestAnswer,
   WidgetTheme, WidgetViewer,
 } from '../../../lib/widget-sandbox';
 import type { IThemeSettings, ThemeKey } from '../../../types';
@@ -25,8 +25,8 @@ import {
   getMainUsername, getUserFullName,
 } from '../../../global/helpers';
 import {
-  selectCanAnimateInterface, selectChat, selectIsWalletAvailable, selectMessageWidgetHeight, selectMessageWidgetStorage,
-  selectUser, selectUserFullInfo, selectWidgetBotId, selectWidgetChatType,
+  selectCanAnimateInterface, selectChat, selectMessageWidgetHeight, selectMessageWidgetStorage,
+  selectUser, selectUserFullInfo, selectWidgetChatType,
 } from '../../../global/selectors';
 import { selectSharedSettings } from '../../../global/selectors/sharedState';
 import buildClassName from '../../../util/buildClassName';
@@ -39,7 +39,6 @@ import { extractCurrentThemeParams, prepareHexColor } from '../../../util/themeS
 import {
   bindWidgetStorage, getWidgetStorageKey, moveWidgetStorage, widgetSessionStorages, widgetTransientLocalStorages,
 } from '../../../util/widgetStorage';
-import { registerWidgetWalletCall } from '../../../util/widgetWalletCalls';
 import { callApi } from '../../../api/gramjs';
 import { REM } from '../../common/helpers/mediaDimensions';
 import { resizeMessageWidget } from '../helpers/messageWidgetResize';
@@ -74,7 +73,6 @@ type StateProps = {
   isLocked?: boolean;
   themeSettings?: IThemeSettings;
   messageTextSize: number;
-  isWalletAvailable?: boolean;
 };
 
 export const MIN_WIDTH = 200;
@@ -126,11 +124,11 @@ export const IS_SUPPORTED = typeof Worker === 'function' && typeof WebAssembly =
 function Widget({
   message, theme, isInSelectMode, isProtected, isActive, canReply, hasHeader, hasTimeOverlay,
   observeIntersectionForLoading, observeIntersectionForPlaying, isPreview,
-  accountId, areWidgetsDisabled, isLocked, themeSettings, messageTextSize, isWalletAvailable,
+  accountId, areWidgetsDisabled, isLocked, themeSettings, messageTextSize,
 }: OwnProps & StateProps) {
   const {
     setMessageWidgetHeight, toggleSafeLinkModal, updateDraftReplyInfo, openPreviousChat,
-    openTelegramLink, showNotification, openWidgetWalletCall, markMessageWidgetSeen,
+    openTelegramLink, showNotification, markMessageWidgetSeen,
   } = getActions();
   const lang = useLang();
   const { chatId, id: messageId } = message;
@@ -283,37 +281,12 @@ function Widget({
     const global = getGlobal();
     const chat = selectChat(global, chatId);
     if (!chat || isInSelectMode || global.currentUserId !== accountId || global.passcode.isScreenLocked) {
-      return Promise.reject();
+      return Promise.reject('!chat || isInSelectMode")');
     }
 
     const answer = await callApi('fetchBotWidgetQueryAnswer', { chat, messageId, data, withWallet: wallet });
     if (!answer || answer.error) return Promise.reject(answer?.error);
     return { result: answer.result };
-  });
-
-  // The framework let the call through on a tap or its grant; the client's wallet window asks the user
-  const handleWallet = useLastCallback((call: WalletCall): Promise<WidgetRequestAnswer> => {
-    const global = getGlobal();
-    const botId = selectWidgetBotId(global, message);
-    if (!botId || global.currentUserId !== accountId || global.passcode.isScreenLocked) return Promise.reject();
-
-    return new Promise((resolve, reject) => {
-      const callId = registerWidgetWalletCall((outcome) => {
-        if (outcome.error) reject(outcome.error);
-        else resolve({ result: outcome.result });
-      });
-      openWidgetWalletCall({
-        callId,
-        botId,
-        chatId,
-        messageId,
-        call: {
-          method: call.method,
-          params: call.method === 'signData' ? call.payload : call.transaction,
-          data: call.data,
-        },
-      });
-    });
   });
 
   const handleCopyText = useLastCallback((text: string) => {
@@ -403,7 +376,6 @@ function Widget({
           backgroundQuery: canBackgroundQuery,
           chatType: selectWidgetChatType(global, chatId),
           viewer: canQuery ? buildWidgetViewer(selectUser(global, global.currentUserId!)) : undefined,
-          wallet: isWalletAvailable,
         },
         // Select mode only blocks input (the mount takes no pointer events); the widget keeps running
         visible: isVisible,
@@ -450,7 +422,6 @@ function Widget({
           if (!getIsCancelled() && getGlobal().currentUserId === accountId) handleAction(action);
         },
         onRequest: (request) => handleRequest(request),
-        onWallet: (call) => (getIsCancelled() ? Promise.reject() : handleWallet(call)),
         onCopyText: (text) => {
           if (!getIsCancelled()) handleCopyText(text);
         },
@@ -597,7 +568,7 @@ function Widget({
     };
     // The context is fixed for the host's life, so a change of the server's flags or of the wallet needs a new host
   }, [
-    canStart, html, accountId, storageKey, canQuery, canBackgroundQuery, isCopy, isWalletAvailable,
+    canStart, html, accountId, storageKey, canQuery, canBackgroundQuery, isCopy,
     createHost, flushStorage, slotRetry, isOnScreenRef, storageEpoch,
   ]);
 
@@ -846,6 +817,5 @@ export default memo(withGlobal<OwnProps>((global, { theme }): Complete<StateProp
   isLocked: global.passcode.isScreenLocked || global.auth.isLoggingOut,
   themeSettings: selectSharedSettings(global).themes[theme],
   messageTextSize: selectSharedSettings(global).messageTextSize,
-  isWalletAvailable: selectIsWalletAvailable(global),
   areWidgetsDisabled: global.appConfig.areWidgetsDisabled,
 }))(Widget));

@@ -14,7 +14,6 @@ import { getPeerTitle } from '../../../global/helpers/peers';
 import { selectChat, selectIsPremiumPurchaseBlocked, selectUser } from '../../../global/selectors';
 import { selectSharedSettings } from '../../../global/selectors/sharedState.ts';
 import buildClassName from '../../../util/buildClassName';
-import { convertTonFromNanos, convertTonToUsd, formatCurrencyAsString } from '../../../util/formatCurrency';
 import { clamp } from '../../../util/math';
 import { resolveTransitionName } from '../../../util/resolveTransitionName.ts';
 import { REM } from '../../common/helpers/mediaDimensions';
@@ -24,7 +23,6 @@ import useFlag from '../../../hooks/useFlag';
 import useLang from '../../../hooks/useLang';
 import useLastCallback from '../../../hooks/useLastCallback';
 
-import GramIcon from '../../common/icons/GramIcon';
 import Icon from '../../common/icons/Icon';
 import SafeLink from '../../common/SafeLink';
 import Button from '../../ui/Button';
@@ -59,24 +57,17 @@ export type OwnProps = {
 
 type StateProps = {
   starsBalanceState?: GlobalState['stars'];
-  tonBalanceState?: GlobalState['ton'];
   canBuyPremium?: boolean;
   tonUsdRate?: number;
   animationLevel: AnimationLevel;
 };
 
 const StarsBalanceModal = ({
-  modal, starsBalanceState, tonBalanceState, canBuyPremium, tonUsdRate, animationLevel,
+  modal, starsBalanceState, canBuyPremium, tonUsdRate, animationLevel,
 }: OwnProps & StateProps) => {
   const {
     closeStarsBalanceModal, loadStarsTransactions, loadStarsSubscriptions, openStarsGiftingPickerModal, openInvoice,
-    openWalletModal,
   } = getActions();
-
-  const isTon = modal?.currency === TON_CURRENCY_CODE;
-  const currentState = isTon ? tonBalanceState : starsBalanceState;
-  const { balance, history } = currentState || {};
-  const { subscriptions } = (!isTon && starsBalanceState) || {};
 
   const lang = useLang();
 
@@ -86,7 +77,13 @@ const StarsBalanceModal = ({
   const headerRef = useRef<HTMLDivElement>();
   const historyRef = useRef<HTMLDivElement>();
 
-  const isOpen = Boolean(modal && (starsBalanceState || tonBalanceState));
+  const isTon = modal?.currency === TON_CURRENCY_CODE;
+
+  const currentState = starsBalanceState;
+  const { balance, history } = currentState || {};
+  const { subscriptions } = (!isTon && starsBalanceState) || {};
+
+  const isOpen = Boolean(modal && (starsBalanceState));
 
   const {
     originStarsPayment, originReaction, originGift, topup,
@@ -218,36 +215,6 @@ const StarsBalanceModal = ({
     );
   };
 
-  const renderTonHeaderSection = () => {
-    const tonNanos = balance?.currency === TON_CURRENCY_CODE ? balance.amount : 0n;
-    return (
-      <>
-        <ParticlesHeader
-          model="diamond-3d"
-          color="blue"
-          title={title}
-          description={lang('GramEarningsText')}
-          isDisabled={!isOpen}
-          className={styles.particlesHeader}
-          titleClassName={styles.heroTitle}
-        />
-        <div className={styles.tonBalance}>
-          <GramIcon className={styles.tonIconBalance} />
-          {convertTonFromNanos(tonNanos)}
-        </div>
-        {Boolean(tonUsdRate) && (
-          <div className={styles.tonInUsd}>
-            {`≈ ${formatCurrencyAsString(
-              convertTonToUsd(tonNanos, tonUsdRate),
-              'USD',
-              lang.code,
-            )}`}
-          </div>
-        )}
-      </>
-    );
-  };
-
   const handleScroll = useLastCallback((e: React.UIEvent<HTMLDivElement>) => {
     const scroller = e.currentTarget;
     const { scrollTop } = scroller;
@@ -270,8 +237,7 @@ const StarsBalanceModal = ({
   // opened it, leaving reopens the wallet.
   const handleClose = useLastCallback(() => {
     closeStarsBalanceModal();
-
-    if (modal?.shouldReturnToWallet) openWalletModal();
+    // if (modal?.shouldReturnToWallet) openWalletModal();
   });
 
   const handleSwitchTab = useLastCallback((index: number) => {
@@ -366,7 +332,7 @@ const StarsBalanceModal = ({
       >
         <div className={styles.content}>
           <div className={styles.intro}>
-            {isTon ? renderTonHeaderSection() : renderStarsHeaderSection()}
+            {renderStarsHeaderSection()}
           </div>
           {shouldShowItems && Boolean(subscriptions?.list.length) && (
             <div>
@@ -450,7 +416,6 @@ export default memo(withGlobal<OwnProps>(
   (global): Complete<StateProps> => {
     return {
       starsBalanceState: global.stars,
-      tonBalanceState: global.ton,
       canBuyPremium: !selectIsPremiumPurchaseBlocked(global),
       tonUsdRate: global.appConfig.tonUsdRate,
       animationLevel: selectSharedSettings(global).animationLevel,

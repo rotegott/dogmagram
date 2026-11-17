@@ -19,7 +19,6 @@ import CustomEmoji from '../common/CustomEmoji';
 import FormattedDate from '../common/FormattedDate';
 import SafeLink from '../common/SafeLink';
 import Spoiler from '../common/spoiler/Spoiler';
-import TonAddressLink from '../common/TonAddressLink';
 import MentionLink from '../middle/message/MentionLink';
 import InlineImage from './InlineImage';
 import Latex from './Latex';
@@ -241,9 +240,7 @@ const RichText = ({
         </FormattedDate>
       );
     case 'tonAddress': {
-      const address = getRichTextPlainText(text.text);
-
-      return <TonAddressLink address={address} noCopy={isProtected}>{renderNestedText()}</TonAddressLink>;
+      return <>Ton Address Link</>;
     }
     case 'hashtag':
     case 'cashtag': {

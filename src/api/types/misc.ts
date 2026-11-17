@@ -402,13 +402,6 @@ export interface ApiAppConfig {
   tonStargiftResaleCommissionPermille?: number;
   tonUsdRate?: number;
   tonTopupUrl: string;
-  isWalletAvailable?: boolean;
-  // Transfers below this are hidden from the wallet history
-  walletTransferMinNanos?: bigint;
-  walletGaslessDailyTransfers?: number;
-  // Collection slugs, such as `PlushPepe`, whose gifts can color the wallet card
-  walletCardBackgroundCollections?: string[];
-  oldWalletBotUsername?: string;
   pollMaxAnswers: number;
   pollClosePeriodMax: number;
   pollCountriesMax: number;
@@ -517,13 +510,6 @@ export type ApiUrlAuthResultRequest = {
   matchCodesFirst?: boolean;
   userIdHint?: string;
   verifiedAppName?: string;
-  walletRequest?: ApiUrlAuthWalletRequest;
-};
-
-export type ApiUrlAuthWalletRequest = {
-  sessionId: string;
-  // The dApp key the connection event is encrypted to
-  clientId: string;
 };
 
 type ApiUrlAuthResultAccepted = {

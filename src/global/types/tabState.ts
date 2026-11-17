@@ -60,11 +60,6 @@ import type {
   ApiStarTopupOption,
   ApiSticker,
   ApiThumbnail,
-  ApiTonConnectConnectRequest,
-  ApiTonConnectError,
-  ApiTonConnectRequest,
-  ApiTonConnectRequestPreview,
-  ApiTonConnectSession,
   ApiTypeCurrencyAmount,
   ApiTypePrepaidGiveaway,
   ApiTypeStoryView,
@@ -72,13 +67,6 @@ import type {
   ApiUrlAuthResultRequest,
   ApiUser,
   ApiVideo,
-  ApiWalletGiftDeposit,
-  ApiWidgetWalletCall,
-  DecryptWalletCommentError,
-  ExportSecretPhraseError,
-  ReplaceWalletError,
-  SendTonTransferError,
-  WalletBackupError,
 } from '../../api/types';
 import type { ParsedCheckList } from '../../components/middle/composer/helpers/parseCheckList';
 import type { FoldersActions } from '../../hooks/reducers/useFoldersReducer';
@@ -1035,121 +1023,6 @@ export type TabState = {
     peerId: string;
     uniqueGifts?: ApiSavedStarGift[];
     uniqueGiftsNextOffset?: string;
-  };
-
-  loadingWalletTransactionId?: string;
-
-  walletModal?: {
-    shouldOpenTonConnect?: boolean;
-    initialRecipient?: string;
-    initialAmount?: bigint;
-    initialComment?: string;
-    isInitialCommentEncrypted?: boolean;
-    shouldCloseAfterSend?: boolean;
-    // Leaving the form for the main screen closes the wallet instead
-    shouldCloseOnBack?: boolean;
-    initialTransactionId?: string;
-    shouldShowIntro?: boolean;
-    isBuyPending?: boolean;
-    // Moves the phrase out of the app passcode's keeping before that passcode goes
-    shouldReleaseKey?: boolean;
-    shouldOpenCollectibles?: boolean;
-    shouldOpenReceive?: boolean;
-  };
-
-  walletCardModal?: {
-    userId: string;
-  };
-
-  // The form's request until the transfer is queued; its record in the history follows it from then on
-  walletTransfer?: {
-    status: 'pending' | 'queued' | 'error';
-    error?: SendTonTransferError;
-  };
-
-  // Decrypted requests only live in the open tab, never in the persistent wallet cache
-  walletTonConnect?: {
-    status: 'pending' | 'ready' | 'done' | 'error';
-    ownAddress?: string;
-    session?: ApiTonConnectSession;
-    connectRequest?: ApiTonConnectConnectRequest;
-    // Goes back to the server with the connect result
-    traceId?: string;
-    isDeclining?: boolean;
-    // A login through Telegram that also connects the wallet, see `urlAuth`
-    oauth?: {
-      botId: string;
-      domain: string;
-      sessionId: string;
-      clientId: string;
-    };
-    request?: ApiTonConnectRequest;
-    preview?: ApiTonConnectRequestPreview;
-    error?: ApiTonConnectError;
-    // A widget's call to pay or sign: the window names its bot, and the outcome goes to the bot, see `widgetWalletCalls`
-    widget?: {
-      callId: string;
-      botId: string;
-      chatId: string;
-      messageId: number;
-      call: ApiWidgetWalletCall;
-    };
-  };
-
-  walletTransferFee?: {
-    // See `buildWalletTransferFeeKey`
-    key?: string;
-    // Nanotons
-    fee?: bigint;
-    canEncryptComment?: boolean;
-    canUseRelayer?: boolean;
-    isLoading?: boolean;
-    isFailed?: boolean;
-  };
-
-  // The transfer prepared to move a gift NFT from the wallet to the account
-  walletGiftDeposit?: {
-    collectibleAddress: string;
-    deposit?: ApiWalletGiftDeposit;
-    error?: SendTonTransferError;
-    errorKey?: RegularLangFnParameters;
-    isLoading?: boolean;
-  };
-
-  // The `.ton` domain typed as the recipient in this tab. `false` records a domain with no wallet.
-  walletDomainLookup?: {
-    domain: string;
-    address?: string | false;
-    isFailed?: boolean;
-  };
-
-  // Users the chat search found for the typed recipient name, among the own chats and elsewhere
-  walletRecipientSearch?: {
-    query: string;
-    localUserIds: string[];
-    globalUserIds: string[];
-  };
-
-  walletMnemonic?: {
-    status: 'pending' | 'ready' | 'error';
-    words?: string[];
-    error?: ExportSecretPhraseError;
-  };
-
-  walletBackup?: {
-    status: 'pending' | 'done' | 'error';
-    error?: WalletBackupError;
-  };
-
-  walletReplace?: {
-    status: 'pending' | 'done' | 'error';
-    error?: ReplaceWalletError;
-  };
-
-  walletCommentDecryption?: {
-    transactionId: string;
-    status: 'pending' | 'error';
-    error?: DecryptWalletCommentError;
   };
 
   starsBalanceModal?: {

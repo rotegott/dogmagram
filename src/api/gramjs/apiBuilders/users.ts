@@ -29,7 +29,6 @@ import {
   buildApiProfileTab,
   buildAvatarPhotoId,
 } from './peers';
-import { buildApiWalletCard } from './wallet';
 
 export function buildApiUserFullInfo(mtpUserFull: GramJs.users.UserFull): ApiUserFullInfo {
   const {
@@ -42,7 +41,7 @@ export function buildApiUserFullInfo(mtpUserFull: GramJs.users.UserFull): ApiUse
       botCanManageEmojiStatus, settings, sendPaidMessagesStars, displayGiftsButton, disallowedGifts,
       starsRating, starsMyPendingRating, starsMyPendingRatingDate, mainTab, savedMusic, note,
       noforwardsMyEnabled, noforwardsPeerEnabled, unofficialSecurityRisk, privateForwardName,
-      ttlPeriod, theme, wallpaper, botManagerId, walletCard, shareTheme,
+      ttlPeriod, theme, wallpaper, botManagerId, shareTheme,
     },
     users,
   } = mtpUserFull;
@@ -92,7 +91,6 @@ export function buildApiUserFullInfo(mtpUserFull: GramJs.users.UserFull): ApiUse
     noForwardsPeerEnabled: noforwardsPeerEnabled,
     isUnofficialSecurityRisk: unofficialSecurityRisk,
     botManagerId: botManagerId !== undefined ? buildApiPeerId(botManagerId, 'user') : undefined,
-    walletCard: walletCard && buildApiWalletCard(walletCard),
     shareTheme: shareTheme && buildApiShareTheme(shareTheme),
   };
 }

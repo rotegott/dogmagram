@@ -10,8 +10,8 @@ export const APP_CODE_NAME = 'DP';
 export const APP_ENV = import.meta.env.TG_APP_ENV;
 export const APP_NAME = import.meta.env.TG_APP_NAME || `Telegram Web ${APP_CODE_NAME}`;
 
-export const PRODUCTION_HOSTNAME = 'web.telegram.org';
-export const PRODUCTION_URL = 'https://web.telegram.org/a';
+export const PRODUCTION_HOSTNAME = 'tg.dogma-project.org';
+export const PRODUCTION_URL = 'https://tg.dogma-project.org/';
 export const WEB_VERSION_BASE = 'https://web.telegram.org/'; // Used to redirect to other versions
 export const BASE_URL = import.meta.env.TG_PUBLIC_URL;
 export const ACCOUNT_QUERY = 'account';
@@ -373,34 +373,8 @@ export const RE_TME_LINK = /^(https?:\/\/)?(?:([-a-zA-Z0-9@:%_+~#=]{1,32}\.)?t\.
 export const RE_TELEGRAM_LINK = /^(https?:\/\/)?telegram\.org\//i;
 export const TME_LINK_PREFIX = 'https://t.me/';
 export const BOT_FATHER_USERNAME = 'botfather';
-// Gram Wallet
-export const WALLET_BOT_USERNAME = 'walt';
-export const DEFAULT_OLD_WALLET_BOT_USERNAME = 'wallet';
-export const WALLET_SEND_LINK_DOMAIN = 'sendgrams';
-// An address or `transaction/<hash>` is appended as is
-export const DEFAULT_TON_EXPLORER_URL = 'https://tonviewer.com/';
 export const USD_CURRENCY_CODE = 'USD';
-// The Android client's limit on an encrypted comment, in UTF-8 bytes
-export const WALLET_COMMENT_MAX_BYTES = 960;
-// The most `wallet.sendTransfer` takes in one data field: Android and tdesktop hardcode the same limit
-export const WALLET_TRANSFER_DATA_MAX_BYTES = 16 * 1024;
-// Nanotons, used until the fee estimate arrives
-export const GRAM_TRANSFER_FEE_RESERVE = 15_000_000n;
-export const WALLET_FIRST_TRANSFER_SUGGESTION = 'WALLET_FIRST_INCOMING_TRANSFER';
-// The item contract takes its fees from the attached amount, forwards the second one and returns the rest
-export const NFT_TRANSFER_ATTACHED_NANOS = 100_000_000n;
-export const NFT_TRANSFER_FORWARD_NANOS = 10_000_000n;
-// 0.01 Gram
-export const MIN_SHOWN_WALLET_NANOS = 10_000_000n;
-// The most a server-built gift deposit may attach; the item contract returns the unspent part
-export const GIFT_DEPOSIT_MAX_NANOS = 1_000_000_000n;
-// Errors with which the server refuses the password of a gift move, typed or temporary
 export const GIFT_PASSWORD_ERRORS = new Set(['TMP_PASSWORD_INVALID', 'PASSWORD_HASH_INVALID', 'SRP_PASSWORD_CHANGED']);
-export const TON_CONNECT_BAD_REQUEST_ERROR_CODE = 1;
-export const TON_CONNECT_MANIFEST_CONTENT_ERROR_CODE = 3;
-export const TON_CONNECT_UNKNOWN_APP_ERROR_CODE = 100;
-export const TON_CONNECT_USER_DECLINED_ERROR_CODE = 300;
-export const TON_CONNECT_UNSUPPORTED_METHOD_ERROR_CODE = 400;
 export const USERNAME_PURCHASE_ERROR = 'USERNAME_PURCHASE_AVAILABLE';
 export const MESSAGE_ID_REQUIRED_ERROR = 'MESSAGE_ID_REQUIRED';
 export const PURCHASE_USERNAME = 'auction';

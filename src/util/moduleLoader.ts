@@ -8,7 +8,6 @@ export enum Bundles {
   Calls,
   Stars,
   Editor,
-  Wallet,
 }
 
 interface ImportedBundles {
@@ -18,7 +17,6 @@ interface ImportedBundles {
   [Bundles.Calls]: typeof import('../bundles/calls');
   [Bundles.Stars]: typeof import('../bundles/stars');
   [Bundles.Editor]: typeof import('../bundles/editor');
-  [Bundles.Wallet]: typeof import('../bundles/wallet');
 }
 
 type BundlePromises = {
@@ -57,9 +55,6 @@ export async function loadBundle<B extends Bundles>(bundleName: B) {
         break;
       case Bundles.Editor:
         LOAD_PROMISES[Bundles.Editor] = import('../bundles/editor');
-        break;
-      case Bundles.Wallet:
-        LOAD_PROMISES[Bundles.Wallet] = import('../bundles/wallet');
         break;
     }
 

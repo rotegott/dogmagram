@@ -3,7 +3,7 @@ import { Api as GramJs } from '../../../lib/gramjs';
 import type { ApiPhoneCallDiscardReason } from '../../types';
 import type { ApiMessageAction } from '../../types/messageActions';
 
-import { getBigIntAbs, toJSNumber } from '../../../util/numbers';
+import { toJSNumber } from '../../../util/numbers';
 import { buildApiBotApp } from './bots';
 import { buildApiFormattedText, buildApiPhoto } from './common';
 import { buildApiStarGift } from './gifts';
@@ -447,38 +447,6 @@ export function buildApiMessageAction(action: GramJs.TypeMessageAction): ApiMess
       cryptoCurrency,
       cryptoAmount,
       transactionId,
-    };
-  }
-
-  if (action instanceof GramJs.MessageActionWalletTonConnectRequest) {
-    return {
-      mediaType: 'action',
-      type: 'walletTonConnectRequest',
-      sessionId: action.sessionId.toString(),
-      expires: action.expires,
-      topic: action.topic,
-      traceId: action.traceId,
-      dappName: action.dappName,
-      isAccepted: action.accepted,
-      isDeclined: action.declined,
-    };
-  }
-
-  if (action instanceof GramJs.MessageActionGramTransfer) {
-    const {
-      amount, peerAddress, transactionId, comment, commentEncrypted,
-    } = action;
-
-    // With the flag set, `comment` holds the base64 payload
-    return {
-      mediaType: 'action',
-      type: 'gramTransfer',
-      // The server signs the amount by direction, as in the wallet history
-      amount: getBigIntAbs(amount),
-      peerAddress,
-      transactionId,
-      comment: commentEncrypted ? undefined : comment,
-      encryptedComment: commentEncrypted ? comment : undefined,
     };
   }
 

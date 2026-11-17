@@ -54,7 +54,6 @@ import type { ApiStealthMode, ApiStory, ApiStorySkipped } from './stories';
 import type {
   ApiUser, ApiUserFullInfo, ApiUserStatus,
 } from './users';
-import type { ApiTonConnectSession, ApiWalletGaslessInfo, ApiWalletStateResult, ApiWalletTransaction } from './wallet';
 
 export type ApiUpdateReady = {
   '@type': 'updateApiReady';
@@ -964,39 +963,6 @@ export type ApiUpdateStarsBalance = {
   balance: ApiTypeCurrencyAmount;
 };
 
-export type ApiUpdateWalletState = {
-  '@type': 'updateWalletState';
-  wallet: ApiWalletStateResult;
-};
-
-export type ApiUpdateWalletTonConnectSession = {
-  '@type': 'updateWalletTonConnectSession';
-  session: ApiTonConnectSession;
-};
-
-export type ApiUpdateWalletTonConnectPendingDisconnect = {
-  '@type': 'updateWalletTonConnectPendingDisconnect';
-  sessionIds: string[];
-};
-
-// Reported by the chain activity stream
-export type ApiUpdateWalletActivity = {
-  '@type': 'updateWalletActivity';
-};
-
-// `transaction` is present once the transfer is on the chain
-export type ApiUpdateWalletSentTransaction = {
-  '@type': 'updateWalletSentTransaction';
-  msgHash: string;
-  isGasless?: boolean;
-  transaction?: ApiWalletTransaction;
-};
-
-export type ApiUpdateWalletGaslessInfo = {
-  '@type': 'updateWalletGaslessInfo';
-  gaslessInfo: ApiWalletGaslessInfo;
-};
-
 export type ApiUpdateStarGiftAuctionState = {
   '@type': 'updateStarGiftAuctionState';
   giftId: string;
@@ -1111,9 +1077,7 @@ export type ApiUpdate = (
   | ApiDeleteQuickReply | ApiUpdateDeleteQuickReplyMessages | ApiUpdateDeleteProfilePhoto | ApiUpdateNewProfilePhoto
   | ApiUpdateEntities | ApiUpdatePaidReactionPrivacy | ApiUpdateLangPackTooLong | ApiUpdateLangPack
   | ApiUpdateNotSupportedInFrozenAccountError
-  | ApiUpdateAiComposeTones | ApiUpdateWalletState | ApiUpdateWalletActivity
-  | ApiUpdateWalletSentTransaction | ApiUpdateWalletGaslessInfo
-  | ApiUpdateWalletTonConnectSession | ApiUpdateWalletTonConnectPendingDisconnect
+  | ApiUpdateAiComposeTones
 );
 
 export type OnApiUpdate = (update: ApiUpdate) => void;

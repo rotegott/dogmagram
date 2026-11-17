@@ -31,16 +31,13 @@ import {
   getDek,
   getDekGeneration,
   hasLegacyEncryptedSession,
-  hasOtherSlotWalletVaultSecrets,
   InvalidPasscodeError,
-  listWalletVaultSecrets,
   loadPasscodeMeta,
   markPasscodeLocked,
   PasscodeDataCorruptedError,
   readGlobalsVaultForSlot,
   refreshSessionsVault,
   removePasskeyFromMeta,
-  removeWalletVaultSecretsNow,
   requestPasscodeStateLock,
   resetInvalidPasscodeAttempts,
   restoreMissingSessionsFromVault,
@@ -95,7 +92,6 @@ import {
 } from '../../index';
 import { INITIAL_GLOBAL_STATE } from '../../initialState';
 import { clearGlobalForLockScreen, clearPasscodeSettings, updatePasscodeSettings } from '../../reducers';
-import { updateWallet } from '../../reducers/wallet';
 import { selectGlobalWallpaperBackgrounds, selectTabState } from '../../selectors';
 
 const WRONG_PASSCODE_ERROR: RegularLangFnParameters = { key: 'PasscodeWrong' };
@@ -180,34 +176,10 @@ addActionHandler('setPasscode', async (global, actions, payload): Promise<void> 
 });
 
 addActionHandler('clearPasscode', async (global, actions, payload): Promise<void> => {
-  const { shouldDropWalletKeys } = payload || {};
   let passkeyCredentialId: number[] | undefined;
   const isDisabled = await requestPasscodeStateLock(async () => {
     const generation = getDekGeneration();
     if (!generation) return false;
-
-    // The wallet phrases go only together with the passcode, under the same lock
-    const hasOwnWalletKeys = (await listWalletVaultSecrets(ACCOUNT_SLOT)).length > 0;
-
-    if (hasOwnWalletKeys && !shouldDropWalletKeys) {
-      actions.openWalletModal({ shouldReleaseKey: true, tabId: getCurrentTabId() });
-
-      return false;
-    }
-
-    // The passcode is shared by every account, so it stays until each of them has dropped its phrases
-    if (await hasOtherSlotWalletVaultSecrets(ACCOUNT_SLOT)) {
-      if (hasOwnWalletKeys) {
-        await removeWalletVaultSecretsNow(ACCOUNT_SLOT);
-        global = getGlobal();
-        global = updateWallet(global, { hasLocalSecret: false, savedWallets: undefined });
-        setGlobal(global);
-      }
-
-      actions.showNotification({ message: { key: 'PasscodeWalletKeyOtherAccounts' }, tabId: getCurrentTabId() });
-
-      return false;
-    }
 
     global = getGlobal();
     await writeGlobalsVaultForSlot(ACCOUNT_SLOT, serializeGlobal(global));
@@ -246,13 +218,6 @@ addActionHandler('clearPasscode', async (global, actions, payload): Promise<void
         tabId: getCurrentTabId(),
       });
       return false;
-    }
-
-    // The phrases went with the vault the commit above dropped
-    if (hasOwnWalletKeys) {
-      global = getGlobal();
-      global = updateWallet(global, { hasLocalSecret: false, savedWallets: undefined });
-      setGlobal(global);
     }
 
     localStorage.removeItem(IS_SCREEN_LOCKED_CACHE_KEY);

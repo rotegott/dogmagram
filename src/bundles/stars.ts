@@ -26,9 +26,6 @@ export { default as StarGiftPriceDecreaseInfoModal } from '../components/modals/
 export { default as AboutStarGiftModal } from '../components/modals/gift/AboutStarGiftModal';
 export { default as GiftStatusInfoModal } from '../components/modals/gift/status/GiftStatusInfoModal';
 export { default as GiftWithdrawModal } from '../components/modals/gift/withdraw/GiftWithdrawModal';
-export { default as GiftTransferModal } from '../components/modals/gift/transfer/GiftTransferModal';
-export { default as GiftTransferConfirmModal } from '../components/modals/gift/transfer/GiftTransferConfirmModal';
-export { default as GiftMoveToWalletModal } from '../components/modals/gift/transfer/GiftMoveToWalletModal';
 export { default as GiftDescriptionRemoveModal } from '../components/modals/gift/message/GiftDescriptionRemoveModal';
 export { default as GiftOfferAcceptModal } from '../components/modals/gift/offer/GiftOfferAcceptModal';
 export { default as ChatRefundModal } from '../components/modals/stars/chatRefund/ChatRefundModal';

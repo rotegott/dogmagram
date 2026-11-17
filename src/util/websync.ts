@@ -58,9 +58,12 @@ export const forceWebsync = (authed: boolean) => {
           resolve();
         };
 
-        script.onerror = () => {
+        script.onerror = (error) => {
           removeElement();
-          reject();
+          // eslint-disable-next-line no-console
+          console.error('Can\'t load websync', error);
+          resolve();
+          // reject(error);
         };
       });
     }));
@@ -79,7 +82,6 @@ export function startWebsync() {
   if (DEBUG || IS_TAURI) {
     return;
   }
-
   if (lastTimeout !== undefined) return;
   const currentTs = getTs();
 

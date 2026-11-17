@@ -40,7 +40,6 @@ import type {
   ApiThemeParameters,
   ApiTypeCurrencyAmount,
   ApiVideo,
-  ApiWalletCardSticker,
   MediaContent,
 } from '../../types';
 import {
@@ -48,7 +47,6 @@ import {
 } from '../../types';
 
 import { CHANNEL_ID_BASE, DEFAULT_STATUS_ICON_ID, STARS_CURRENCY_CODE } from '../../../config';
-import { toBounceableAddress } from '../../../lib/ton/address';
 import { writeUint32LE } from '../../../util/encoding/buffer';
 import { getMtpEphemeralMessageId } from '../../../util/keys/messageKey';
 import { deserializeBytes } from '../helpers/misc';
@@ -1202,17 +1200,4 @@ export function buildInputProfileTab(profileTab: ApiProfileTab) {
       return _exhaustiveCheck;
     }
   }
-}
-
-export function buildInputWalletCardSticker({ address, coordinates }: ApiWalletCardSticker) {
-  const {
-    x, y, width, height, rotation, radius,
-  } = coordinates;
-
-  return new GramJs.InputWalletCardSticker({
-    coordinates: new GramJs.MediaAreaCoordinates({
-      x, y, w: width, h: height, rotation, radius,
-    }),
-    nftAddress: toBounceableAddress(address),
-  });
 }

@@ -10,7 +10,6 @@ import useLastCallback from '../../../hooks/useLastCallback.ts';
 
 import InteractiveSparkles from '../../common/InteractiveSparkles';
 import StickerView from '../../common/StickerView';
-import WalletDiamond from '../wallet/WalletDiamond';
 import SwayingStar from './SwayingStar.tsx';
 
 import styles from './ParticlesHeader.module.scss';
@@ -30,7 +29,6 @@ interface OwnProps {
 }
 
 const GIFT_STICKER_SIZE = 8 * REM;
-const DIAMOND_3D_SIZE = 130;
 
 const PARTICLE_PARAMS = {
   centerShift: [0, -36] as const,
@@ -86,9 +84,7 @@ function ParticlesHeader({
           onMouseMove={handleMouseMove}
         />
       ) : model === 'diamond-3d' ? (
-        <div className={buildClassName(styles.diamond3d, modelClassName)} onMouseMove={handleMouseMove}>
-          <WalletDiamond size={DIAMOND_3D_SIZE} />
-        </div>
+        <></>
       ) : model === 'sticker' && sticker && (
         <div
           ref={stickerRef}

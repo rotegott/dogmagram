@@ -270,17 +270,6 @@ export interface ApiMessageActionGiftTon extends ActionMediaType {
   transactionId?: string;
 }
 
-export interface ApiMessageActionWalletTonConnectRequest extends ActionMediaType {
-  type: 'walletTonConnectRequest';
-  sessionId: string;
-  expires: number;
-  topic?: string;
-  traceId?: string;
-  dappName?: string;
-  isAccepted?: boolean;
-  isDeclined?: boolean;
-}
-
 // The service account reports transfers from senders the server cannot name, e.g. outside wallets
 export interface ApiMessageActionGramTransfer extends ActionMediaType {
   type: 'gramTransfer';
@@ -483,4 +472,4 @@ export type ApiMessageAction = ApiMessageActionUnsupported | ApiMessageActionCha
   | ApiMessageActionStarGiftPurchaseOffer
   | ApiMessageActionStarGiftPurchaseOfferDeclined | ApiMessageActionNewCreatorPending
   | ApiMessageActionChangeCreator | ApiMessageActionNoForwardsToggle | ApiMessageActionNoForwardsRequest
-  | ApiMessageActionChangeCommunity | ApiMessageActionGramTransfer | ApiMessageActionWalletTonConnectRequest;
+  | ApiMessageActionChangeCommunity;

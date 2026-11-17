@@ -15,7 +15,7 @@ import type {
   GlobalState, TabArgs, TabState,
 } from '../types';
 
-import { STARS_CURRENCY_CODE, TON_CURRENCY_CODE } from '../../config';
+import { STARS_CURRENCY_CODE } from '../../config';
 import { getCurrentTabId } from '../../util/establishMultitabRole';
 import { selectStarsPayment, selectTabState } from '../selectors';
 import { updateTabState } from './tabs';
@@ -143,17 +143,6 @@ export function updateStarsBalance<T extends GlobalState>(
       },
     };
   }
-
-  if (balance.currency === TON_CURRENCY_CODE) {
-    return {
-      ...global,
-      ton: {
-        ...global.ton,
-        balance,
-      },
-    };
-  }
-
   return global;
 }
 
@@ -162,31 +151,7 @@ export function appendStarsTransactions<T extends GlobalState>(
   type: StarsTransactionType,
   transactions: ApiStarsTransaction[],
   nextOffset?: string,
-  isTon?: boolean,
 ): T {
-  if (isTon) {
-    const history = global.ton?.history;
-    if (!history) {
-      return global;
-    }
-
-    const newTypeObject = {
-      transactions: (history[type]?.transactions || []).concat(transactions),
-      nextOffset,
-    };
-
-    return {
-      ...global,
-      ton: {
-        ...global.ton,
-        history: {
-          ...history,
-          [type]: newTypeObject,
-        },
-      },
-    };
-  }
-
   const history = global.stars?.history;
   if (!history) {
     return global;

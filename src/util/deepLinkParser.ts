@@ -1,21 +1,18 @@
 import type { ThreadId } from '../types';
 
-import { RE_TG_LINK, RE_TME_LINK, WALLET_SEND_LINK_DOMAIN } from '../config';
-import { MAX_COINS } from '../lib/ton/cell';
+import { RE_TG_LINK, RE_TME_LINK } from '../config';
 import { IS_BAD_URL_PARSER } from './browser/globalEnvironment';
 import { ensureProtocol } from './browser/url';
 import { parseTimestampDuration } from './dates/timestamp';
 import { isBase64Url } from './encoding/base64';
 import { toChannelId } from './entities/ids';
 import { isUsernameValid } from './entities/username';
-import { parseTonToNanos } from './formatCurrency';
-import { parseTransferComment } from './tonAddress';
 
 export type DeepLinkMethod = 'resolve' | 'login' | 'passport' | 'settings' | 'join' | 'addstickers' | 'addemoji' |
   'setlanguage' | 'addtheme' | 'addstyle' | 'confirmphone' | 'socks' | 'proxy' | 'privatepost' | 'bg' | 'share' |
   'msg' | 'msg_url' | 'invoice' | 'addlist' | 'boost' | 'giftcode' | 'message' | 'premium_offer' |
   'premium_multigift' | 'stars_topup' | 'nft' | 'stars' | 'ton' | 'stargift_auction' | 'premium' | 'oauth' |
-  'newbot' | 'contact' | typeof WALLET_SEND_LINK_DOMAIN;
+  'newbot' | 'contact';
 
 interface PublicMessageLink {
   type: 'publicMessageLink';
@@ -202,20 +199,13 @@ type PublicMessageLinkBuilderParams = Omit<BuilderParams<PublicMessageLink>, 'is
 type PublicUsernameOrBotLinkBuilderParams = Omit<BuilderParams<PublicUsernameOrBotLink>, 'isDirect'> & {
   direct?: string;
 };
-
-type SendGramsLinkBuilderParams = Omit<BuilderParams<SendGramsLink>, 'isCommentEncrypted'> & {
-  text?: string;
-  encrypted?: string;
-};
-
 type OAuthLinkBuilderParams = Omit<BuilderParams<OAuthLink>, 'url'> & {
   url: string;
 };
 
 const ELIGIBLE_HOSTNAMES = new Set(['t.me', 'telegram.me', 'telegram.dog']);
 const MAX_BOT_START_PARAMETER_LENGTH = 64;
-// Up to nine decimals: a finer amount would round into one the link does not name
-const RE_GRAMS_AMOUNT = /^\d+(\.\d{1,9})?$/;
+
 export const RE_TON_TRANSFER_LINK = /^ton:\/\/transfer(?:[/?#]|$)/i;
 
 // A `tc:` link is only followed as a platform deep link, never from message content
@@ -348,14 +338,7 @@ function parseTgLink(url: URL) {
     case 'ton':
       return { type: 'ton' } satisfies TonModalLink;
     case 'sendGramsLink':
-      return buildSendGramsLink({
-        to: queryParams.to,
-        amount: queryParams.amount,
-        text: queryParams.text,
-        comment: queryParams.comment,
-        encrypted: queryParams.encrypted,
-        startApp: queryParams.startapp,
-      });
+      return undefined; // check
     case 'settings':
       return { type: 'settings', path: pathParams.join('/').toLowerCase() || undefined } satisfies SettingsScreenLink;
     case 'oauth':
@@ -487,14 +470,7 @@ function parseHttpLink(url: URL) {
       });
     }
     case 'sendGramsLink':
-      return buildSendGramsLink({
-        to: queryParams.to,
-        amount: queryParams.amount,
-        text: queryParams.text,
-        comment: queryParams.comment,
-        encrypted: queryParams.encrypted,
-        startApp: queryParams.startapp,
-      });
+      return undefined; // check
     case 'newBotLink':
       return buildNewBotLink({
         managerUsername: pathParams[1],
@@ -516,8 +492,6 @@ function getHttpDeepLinkType(
   if (method === 'setlanguage') return len === 2 ? 'languageLink' : 'unknown';
   if (len === 1) {
     if (method === 'share') return 'shareLink';
-
-    if (method === WALLET_SEND_LINK_DOMAIN) return 'sendGramsLink';
 
     if (method === 'boost' || queryParams.boost !== undefined) return 'chatBoostLink';
 
@@ -576,12 +550,6 @@ function getTgDeepLinkType(
       if (domain === 'oauth' && startapp) {
         return 'oauth';
       }
-
-      // `t.me/sendgrams` reaches the web app as `tg://resolve?domain=sendgrams` in `tgaddr`
-      if (domain === WALLET_SEND_LINK_DOMAIN) {
-        return 'sendGramsLink';
-      }
-
       if (domain && post) {
         return 'publicMessageLink';
       }
@@ -625,8 +593,6 @@ function getTgDeepLinkType(
       return 'stars';
     case 'ton':
       return 'ton';
-    case WALLET_SEND_LINK_DOMAIN:
-      return 'sendGramsLink';
     case 'settings': {
       return 'settings';
     }
@@ -902,30 +868,6 @@ function buildGiftAuctionLink(params: BuilderParams<GiftAuctionLink>): BuilderRe
   return {
     type: 'giftAuctionLink',
     slug,
-  };
-}
-
-function buildSendGramsLink(params: SendGramsLinkBuilderParams): BuilderReturnType<SendGramsLink> {
-  const {
-    to, amount, text, comment, encrypted, startApp,
-  } = params;
-
-  if (amount !== undefined && (!to || !RE_GRAMS_AMOUNT.test(amount))) {
-    return undefined;
-  }
-
-  const nanos = amount === undefined ? undefined : parseTonToNanos(amount);
-
-  if (nanos !== undefined && nanos >= MAX_COINS) {
-    return undefined;
-  }
-
-  return {
-    type: 'sendGramsLink',
-    to: to || undefined,
-    amount: nanos || undefined,
-    ...parseTransferComment(text, comment, encrypted),
-    startApp: startApp || undefined,
   };
 }
 

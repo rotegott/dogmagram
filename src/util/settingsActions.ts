@@ -48,7 +48,7 @@ export function runSettingsAction(action: SettingsAction, tabId = getCurrentTabI
 
   switch (action) {
     case 'openWallet':
-      actions.openWalletModal({ tabId });
+      //
       break;
     case 'openPremium':
       actions.openPremiumModal({ tabId });

@@ -12,7 +12,6 @@ import {
   selectIsGiveawayGiftsPurchaseAvailable,
   selectIsPremiumPurchaseBlocked,
 } from './users';
-import { selectIsWalletAvailable } from './wallet';
 
 const getReferencedWallpaperBackgroundsMemo = memoized(getReferencedWallpaperBackgrounds);
 const getGlobalWallpaperBackgroundsMemo = memoized(getGlobalWallpaperBackgrounds);
@@ -83,7 +82,6 @@ export function selectSettingsSearchFlags<T extends GlobalState>(global: T) {
   return {
     canBuyPremium: !selectIsPremiumPurchaseBlocked(global),
     isGiveawayAvailable: selectIsGiveawayGiftsPurchaseAvailable(global),
-    isWalletAvailable: selectIsWalletAvailable(global),
     isPasswordStateKnown: hasPassword !== undefined,
     hasPassword,
     hasPasscode,

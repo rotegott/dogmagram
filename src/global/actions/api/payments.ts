@@ -16,7 +16,6 @@ import { getStripeError } from '../../../util/payments/stripe';
 import { getServerTime } from '../../../util/serverTime';
 import { extractCurrentThemeParams } from '../../../util/themeStyle';
 import { callApi } from '../../../api/gramjs';
-import { getStickerFromGift } from '../../../components/common/helpers/gifts';
 import { isChatChannel, isChatSuperGroup } from '../../helpers';
 import {
   areCurrencyAmountsEqual,
@@ -1207,8 +1206,9 @@ async function payInputStarInvoice<T extends GlobalState>(
   global: T, inputInvoice: ApiInputInvoice, price: ApiTypeCurrencyAmount,
   ...[tabId = getCurrentTabId()]: TabArgs<T>
 ) {
+  if (price.currency === TON_CURRENCY_CODE) return;
   const actions = getActions();
-  const balance = price.currency === TON_CURRENCY_CODE ? global.ton?.balance : global.stars?.balance;
+  const balance = global.stars?.balance;
 
   if (balance === undefined) return;
 
@@ -1395,16 +1395,6 @@ addActionHandler('moveGiftToWallet', async (global, actions, payload): Promise<v
 
     actions.reloadPeerSavedGifts({
       peerId: inputGift.type === 'chat' ? inputGift.chat.id : global.currentUserId!,
-    });
-    actions.showNotification({
-      message: { key: 'GiftMoveToWalletDone' },
-      customEmojiIconId: getStickerFromGift(savedGift.gift)?.id,
-      actionText: { key: 'ViewAction' },
-      action: {
-        action: 'openWalletModal',
-        payload: { shouldOpenCollectibles: true, tabId },
-      },
-      tabId,
     });
     return;
   }

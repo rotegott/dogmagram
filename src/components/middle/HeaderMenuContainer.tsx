@@ -30,7 +30,6 @@ import {
   selectCanGift,
   selectCanManage,
   selectCanManageAutoDelete,
-  selectCanSendMoneyToUser,
   selectCanTranslateChat,
   selectChat,
   selectChatFullInfo,
@@ -123,7 +122,6 @@ type StateProps = {
   canDeleteChat?: boolean;
   canReportChat?: boolean;
   canGift?: boolean;
-  canSendMoney?: boolean;
   canCreateTopic?: boolean;
   canEditTopic?: boolean;
   hasLinkedChat?: boolean;
@@ -176,7 +174,6 @@ const HeaderMenuContainer = ({
   isMuted,
   canDeleteChat,
   canGift,
-  canSendMoney,
   hasLinkedChat,
   canAddContact,
   canCreateTopic,
@@ -235,7 +232,6 @@ const HeaderMenuContainer = ({
     openDisableSharingAboutModal,
     setChatHistoryTtl,
     openAutoDeleteTimerModal,
-    openWalletTransferLink,
   } = getActions();
 
   const lang = useLang();
@@ -398,11 +394,6 @@ const HeaderMenuContainer = ({
     } else {
       openGiftModal({ forUserId: chatId });
     }
-    closeMenu();
-  });
-
-  const handleSendMoneyClick = useLastCallback(() => {
-    openWalletTransferLink({ userId: chatId, shouldCloseAfterSend: true });
     closeMenu();
   });
 
@@ -880,14 +871,6 @@ const HeaderMenuContainer = ({
               {lang('ProfileSendAGift')}
             </MenuItem>
           )}
-          {canSendMoney && (
-            <MenuItem
-              icon="gram-outline"
-              onClick={handleSendMoneyClick}
-            >
-              {lang('WalletSendMoney')}
-            </MenuItem>
-          )}
           {isBot && (
             <MenuItem
               icon={isBlocked ? 'bots' : 'hand-stop'}
@@ -1007,7 +990,6 @@ export default memo(withGlobal<OwnProps>(
       canDeleteChat: getCanDeleteChat(chat),
       canReportChat,
       canGift,
-      canSendMoney: selectCanSendMoneyToUser(global, chatId),
       hasLinkedChat: Boolean(chatFullInfo?.linkedChatId),
       botCommands: chatBot ? userFullInfo?.botInfo?.commands : undefined,
       botPrivacyPolicyUrl: chatBot ? userFullInfo?.botInfo?.privacyPolicyUrl : undefined,

@@ -56,6 +56,3 @@ export * from './forum';
 export * from './communities';
 
 export * from './misc';
-
-export * from './wallet';
-export * from './tonConnect';

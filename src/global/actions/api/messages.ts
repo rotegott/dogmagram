@@ -45,7 +45,6 @@ import {
   SUPPORTED_AUDIO_CONTENT_TYPES,
   SUPPORTED_PHOTO_CONTENT_TYPES,
   SUPPORTED_VIDEO_CONTENT_TYPES,
-  TON_CURRENCY_CODE,
 } from '../../../config';
 import { revokeAttachmentUrls } from '../../../util/attachments';
 import { ensureProtocol } from '../../../util/browser/url';
@@ -639,14 +638,7 @@ addActionHandler('sendMessage', async (global, actions, payload): Promise<void> 
         return;
       }
     } else {
-      const currentTonBalance = global.ton?.balance?.amount || 0n;
-      if (suggestedPostPrice.amount > currentTonBalance) {
-        actions.openStarsBalanceModal({
-          currency: TON_CURRENCY_CODE,
-          tabId,
-        });
-        return;
-      }
+      return;
     }
   }
 
@@ -3197,14 +3189,7 @@ addActionHandler('approveSuggestedPost', async (global, actions, payload): Promi
         return;
       }
     } else {
-      const currentTonBalance = global.ton?.balance?.amount || 0n;
-      if (price.amount > currentTonBalance) {
-        actions.openStarsBalanceModal({
-          currency: TON_CURRENCY_CODE,
-          tabId,
-        });
-        return;
-      }
+      return;
     }
   }
 

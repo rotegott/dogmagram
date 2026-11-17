@@ -239,7 +239,6 @@ const Main = ({
     loadConfig,
     loadAppConfig,
     loadAttachBots,
-    loadWalletState,
     loadContactList,
     loadCustomEmojis,
     loadGenericEmojiEffects,
@@ -341,12 +340,6 @@ const Main = ({
       loadRecentReactions();
       loadDefaultTagReactions();
       loadAttachBots();
-
-      // `wallet.getState` creates the wallet on first call, so it is only made where the wallet is rolled out
-      if (getGlobal().appConfig.isWalletAvailable) {
-        loadWalletState();
-      }
-
       loadNotificationSettings();
       loadNotificationExceptions();
       loadTopPeers({ category: 'botsInline' });
