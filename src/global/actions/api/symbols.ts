@@ -863,23 +863,24 @@ addActionHandler('loadFeaturedEmojiStickers', async (global): Promise<void> => {
   if (!featuredStickers) {
     return;
   }
-
+  const isPremium = selectIsCurrentUserPremium(global);
+  const filtered = isPremium ? featuredStickers.sets : [];
   global = getGlobal();
   global = {
     ...global,
     customEmojis: {
       ...global.customEmojis,
-      featuredIds: featuredStickers.sets.map(({ id }) => id),
+      featuredIds: filtered.map(({ id }) => id),
       byId: {
         ...global.customEmojis.byId,
-        ...buildCollectionByKey(featuredStickers.sets.flatMap((set) => set.stickers || []), 'id'),
+        ...buildCollectionByKey(filtered.flatMap((set) => set.stickers || []), 'id'),
       },
     },
     stickers: {
       ...global.stickers,
       setsById: {
         ...global.stickers.setsById,
-        ...buildCollectionByKey(featuredStickers.sets, 'id'),
+        ...buildCollectionByKey(filtered, 'id'),
       },
     },
   };

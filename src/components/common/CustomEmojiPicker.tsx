@@ -334,11 +334,6 @@ const CustomEmojiPicker = ({
     isWithPaidReaction, collectibleStatusEmojis, topCustomEmojis,
   ]);
 
-  const noPopulatedSets = useMemo(() => (
-    areAddedLoaded
-    && allSets.filter((set) => set.stickers?.length).length === 0
-  ), [allSets, areAddedLoaded]);
-
   const [hasSearchBeenUsed, markSearchUsed] = useFlag();
 
   const searchableStickers = useMemo(() => {
@@ -431,9 +426,8 @@ const CustomEmojiPicker = ({
   }, [isShowingResults, displayGroup]);
 
   const canRenderContent = useAsyncRendering([], SLIDE_TRANSITION_DURATION);
-  const shouldRenderContent = areAddedLoaded && canRenderContent && !noPopulatedSets;
 
-  useHorizontalScroll(headerRef, isMobile || !shouldRenderContent);
+  useHorizontalScroll(headerRef, isMobile || !canRenderContent);
 
   // Scroll container and header when active set changes
   useEffect(() => {
@@ -525,14 +519,12 @@ const CustomEmojiPicker = ({
     styles.listWithSearch,
   );
 
-  const isLoading = !shouldRenderContent && !noPopulatedSets;
+  const isLoading = !canRenderContent;
 
   return (
     <Transition className={fullClassName} name="fade" activeKey={isLoading ? 0 : 1} shouldCleanup>
-      {!shouldRenderContent && !noPopulatedSets ? (
+      {isLoading ? (
         <Loading />
-      ) : !shouldRenderContent && noPopulatedSets ? (
-        <div className={pickerStyles.pickerDisabled}>{lang('NoStickers')}</div>
       ) : (
         <div
           className={buildClassName(
