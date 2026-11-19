@@ -232,6 +232,7 @@ const HeaderMenuContainer = ({
     openDisableSharingAboutModal,
     setChatHistoryTtl,
     openAutoDeleteTimerModal,
+    loadViewportMessages,
   } = getActions();
 
   const lang = useLang();
@@ -280,6 +281,11 @@ const HeaderMenuContainer = ({
       setIsDeleteModalOpen(true);
     }
     setIsMenuOpen(false);
+  });
+
+  const handleForceReload = useLastCallback(() => {
+    loadViewportMessages({ chatId, threadId, shouldForceRender: true });
+    closeMenu();
   });
 
   const closeMenu = useLastCallback(() => {
@@ -904,6 +910,17 @@ const HeaderMenuContainer = ({
                 onClick={handleDelete}
               >
                 {deleteTitle}
+              </MenuItem>
+            </>
+          )}
+          {isTopic && (
+            <>
+              <MenuSeparator />
+              <MenuItem
+                icon="reload"
+                onClick={handleForceReload}
+              >
+                Force Reload
               </MenuItem>
             </>
           )}
