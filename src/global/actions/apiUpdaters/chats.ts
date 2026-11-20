@@ -500,16 +500,16 @@ addActionHandler('apiUpdate', (global, actions, update): ActionReturnType => {
     }
 
     case 'draftMessage': {
-      const {
-        chatId, threadId, draft,
-      } = update;
-      const chat = global.chats.byId[chatId];
-      if (!chat) {
-        return undefined;
-      }
-
-      global = replaceThreadLocalStateParam(global, chatId, threadId || MAIN_THREAD_ID, 'draft', draft);
-      return global;
+      return undefined;
+      // const {
+      //   chatId, threadId, draft,
+      // } = update;
+      // const chat = global.chats.byId[chatId];
+      // if (!chat) {
+      //   return undefined;
+      // }
+      // global = replaceThreadLocalStateParam(global, chatId, threadId || MAIN_THREAD_ID, 'draft', draft);
+      // return global;
     }
 
     case 'updatePendingJoinRequests': {

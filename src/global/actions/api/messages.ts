@@ -992,13 +992,13 @@ addActionHandler('saveDraft', (global, actions, payload): ActionReturnType => {
   };
 
   saveDraft({
-    global, chatId, threadId, draft: newDraft,
+    global, chatId, threadId, draft: newDraft, isLocalOnly: true, noLocalTimeUpdate: true,
   });
 });
 
 addActionHandler('clearDraft', (global, actions, payload): ActionReturnType => {
   const {
-    chatId, threadId = MAIN_THREAD_ID, isLocalOnly, shouldKeepReply, shouldKeepSuggestedPost,
+    chatId, threadId = MAIN_THREAD_ID, shouldKeepReply, shouldKeepSuggestedPost,
   } = payload;
   const currentDraft = selectDraft(global, chatId, threadId);
   if (!currentDraft) {
@@ -1013,12 +1013,14 @@ addActionHandler('clearDraft', (global, actions, payload): ActionReturnType => {
       suggestedPostInfo: shouldKeepSuggestedPost ? currentDraft.suggestedPostInfo : undefined,
     } : undefined;
 
+  purgeDraftFromServer({ global, chatId, threadId, draft: currentDraft });
   saveDraft({
     global,
     chatId,
     threadId,
     draft: newDraft,
-    isLocalOnly: isLocalOnly || currentReplyInfo?.type === 'ephemeral',
+    // isLocalOnly: isLocalOnly || currentReplyInfo?.type === 'ephemeral',
+    isLocalOnly: true,
   });
 });
 
@@ -1062,7 +1064,6 @@ addActionHandler('updateDraftReplyInfo', (global, actions, payload): ActionRetur
     replyInfo: updatedReplyInfo,
     suggestedPostInfo: undefined,
   };
-
   saveDraft({
     global, chatId, threadId, draft: newDraft, isLocalOnly: true, noLocalTimeUpdate: true,
   });
@@ -1074,6 +1075,7 @@ addActionHandler('resetDraftReplyInfo', (global, actions, payload): ActionReturn
   if (!currentMessageList) {
     return;
   }
+
   const { chatId, threadId } = currentMessageList;
   const chat = selectChat(global, chatId);
 
@@ -1085,13 +1087,15 @@ addActionHandler('resetDraftReplyInfo', (global, actions, payload): ActionReturn
     ...currentDraft,
     replyInfo: undefined,
   };
-
+  purgeDraftFromServer({ global, chatId, threadId, draft: currentDraft });
   saveDraft({
     global,
     chatId,
     threadId,
     draft: newDraft,
-    isLocalOnly: Boolean(newDraft) || currentDraft?.replyInfo?.type === 'ephemeral',
+    // isLocalOnly: Boolean(newDraft) || currentDraft?.replyInfo?.type === 'ephemeral',
+    isLocalOnly: true,
+    noLocalTimeUpdate: true,
   });
 });
 
@@ -1128,9 +1132,15 @@ addActionHandler('resetDraftSuggestedPostInfo', (global, actions, payload): Acti
     return;
   }
   const { chatId, threadId } = currentMessageList;
-
+  purgeDraftFromServer({ global, chatId, threadId, draft: undefined });
   saveDraft({
-    global, chatId, threadId, draft: undefined, isLocalOnly: false,
+    global,
+    chatId,
+    threadId,
+    draft: undefined,
+    // isLocalOnly: false,
+    isLocalOnly: true,
+    noLocalTimeUpdate: true,
   });
 });
 
@@ -1250,6 +1260,27 @@ async function saveDraft<T extends GlobalState>({
   global = replaceThreadLocalStateParam(global, chatId, threadId, 'draft', savedDraft);
 
   setGlobal(global);
+}
+
+async function purgeDraftFromServer<T extends GlobalState>({ global, chatId, threadId, draft }: {
+  global: T; chatId: string; threadId: ThreadId; draft?: ApiDraft;
+}) {
+  const chat = selectChat(global, chatId);
+  const user = selectUser(global, chatId);
+  if (!chat || (user && isDeletedUser(user))) return;
+
+  const replyInfo = selectMessageReplyInfo(global, chatId, threadId, draft?.replyInfo);
+
+  await callApi('saveDraft', {
+    chat,
+    draft: {
+      replyInfo: {
+        ...replyInfo,
+        type: 'message',
+        replyToMsgId: -1,
+      },
+    },
+  });
 }
 
 addActionHandler('toggleMessageWebPage', (global, actions, payload): ActionReturnType => {
@@ -3427,6 +3458,8 @@ function moveReplyToNewDraft<T extends GlobalState>(
 addActionHandler('openChatOrTopicWithReplyInDraft', (global, actions, payload): ActionReturnType => {
   const { chatId: toChatId, topicId, tabId = getCurrentTabId() } = payload;
 
+  console.log('DRAFT', 'openChatOrTopicWithReplyInDraft');
+
   global = getGlobal();
 
   const tabState = selectTabState(global, tabId);
@@ -3488,7 +3521,7 @@ addActionHandler('openChatOrTopicWithReplyInDraft', (global, actions, payload): 
   actions.openThread({ chatId: toChatId, threadId, tabId });
   actions.closeMediaViewer({ tabId });
   actions.exitMessageSelectMode({ tabId });
-  actions.clearDraft({ chatId: currentChatId, threadId: currentThreadId });
+  actions.clearDraft({ chatId: currentChatId, threadId: currentThreadId, isLocalOnly: true });
 });
 
 addActionHandler('setForwardChatOrTopic', async (global, actions, payload): Promise<void> => {
