@@ -39,7 +39,7 @@ import {
   compact, pick, pickTruthy, unique,
 } from '../util/iteratees';
 import { ACCOUNT_SLOT, getGlobalStateCacheKey, GLOBAL_STATE_CACHE_KEY } from '../util/multiaccount';
-import { parseJsonWithBigInt, stringifyJsonWithBigInt } from '../util/numbers';
+import { stringifyJsonWithBigInt } from '../util/numbers';
 import { getDek, writeGlobalsVaultForSlot } from '../util/passcode';
 import { onBeforeUnload, throttle } from '../util/schedulers';
 import { getServerTime } from '../util/serverTime';
@@ -194,7 +194,6 @@ export async function loadCache(initialState: GlobalState): Promise<GlobalState 
 
 export function setupCaching() {
   if (isCaching) return;
-
   isCaching = true;
   unsubscribeFromBeforeUnload = onBeforeUnload(updateCacheForced, true);
   window.addEventListener('blur', updateCacheForced);
@@ -216,11 +215,7 @@ async function readCache(initialState: GlobalState): Promise<GlobalState> {
     console.time('global-state-cache-read');
   }
 
-  const json = localStorage.getItem(GLOBAL_STATE_CACHE_KEY);
-  const cachedFromLocalStorage = json ? parseJsonWithBigInt<GlobalState>(json) : undefined;
-  if (cachedFromLocalStorage) localStorage.removeItem(GLOBAL_STATE_CACHE_KEY);
-
-  let cached = cachedFromLocalStorage || await loadCachedGlobal();
+  let cached = await loadCachedGlobal();
   const cachedSharedState = await loadCachedSharedState();
   const cachedAccountThemes = (cached as any)?.settings?.themes as (
     Partial<Record<ThemeKey, IThemeSettings>> | undefined
@@ -518,7 +513,6 @@ function updateCache(force?: boolean) {
   if (isRemovingCache || !isCaching || global.auth.isLoggingOut || (!force && getIsHeavyAnimating())) {
     return;
   }
-
   forceUpdateCache();
 }
 
@@ -527,9 +521,7 @@ export function temporarilySuspendCacheUpdate() {
 }
 
 export function forceUpdateCache() {
-  if (Date.now() < cacheUpdateSuspensionTimestamp) {
-    return;
-  }
+  if (Date.now() < cacheUpdateSuspensionTimestamp) return;
 
   const global = getGlobal();
   const passcodeState = localStorage.getItem(IS_SCREEN_LOCKED_CACHE_KEY);
@@ -553,7 +545,6 @@ export function forceUpdateCache() {
     }
     return;
   }
-
   cacheGlobal(global);
   cacheSharedState(reduceSharedState(global.sharedState));
 }
