@@ -8,14 +8,13 @@ import { requestMeasure } from '../../../../lib/fasterdom/fasterdom';
 import { IS_ANDROID, IS_TOUCH_ENV } from '../../../../util/browser/windowEnvironment';
 import { captureEvents, SwipeDirection } from '../../../../util/captureEvents';
 import stopEvent from '../../../../util/stopEvent';
-import windowSize from '../../../../util/windowSize';
 import { REM } from '../../../common/helpers/mediaDimensions';
 import { preventMessageInputBlur } from '../../helpers/preventMessageInputBlur';
 
 import useFlag from '../../../../hooks/useFlag';
 import useThrottledCallback from '../../../../hooks/useThrottledCallback';
 
-const ANDROID_KEYBOARD_HIDE_DELAY_MS = 350;
+// const ANDROID_KEYBOARD_HIDE_DELAY_MS = 350;
 const SWIPE_ANIMATION_DURATION = 150;
 const QUICK_REACTION_DOUBLE_TAP_DELAY = 200;
 const QUICK_REACTION_AREA_WIDTH = 3 * REM;
@@ -79,20 +78,21 @@ export default function useOuterHandlers(
   }
 
   function handleTap(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (IS_ANDROID) {
-      const target = e.target as HTMLDivElement;
-      if (!target.classList.contains('text-content') && !target.classList.contains('Message')) {
-        return;
-      }
+    return;
+    // if (IS_ANDROID) {
+    //   const target = e.target as HTMLDivElement;
+    //   if (!target.classList.contains('text-content') && !target.classList.contains('Message')) {
+    //     return;
+    //   }
 
-      if (windowSize.getIsKeyboardVisible()) {
-        setTimeout(() => {
-          onContextMenu(e);
-        }, ANDROID_KEYBOARD_HIDE_DELAY_MS);
-      } else {
-        onContextMenu(e);
-      }
-    }
+    //   if (windowSize.getIsKeyboardVisible()) {
+    //     setTimeout(() => {
+    //       onContextMenu(e);
+    //     }, ANDROID_KEYBOARD_HIDE_DELAY_MS);
+    //   } else {
+    //     onContextMenu(e);
+    //   }
+    // }
   }
 
   function handleDoubleTap() {
@@ -129,12 +129,9 @@ export default function useOuterHandlers(
       if ((e.target as HTMLElement).matches('a[href]') || isContextMenuShown) {
         return;
       }
-
       e.preventDefault();
-      selectMessage();
-    } else {
-      onContextMenu(e);
     }
+    onContextMenu(e);
   }
 
   function handleContainerDoubleClick() {
